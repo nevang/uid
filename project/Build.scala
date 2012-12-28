@@ -12,24 +12,29 @@ object Settings {
     scalaVersion := buildScalaVersion)
 
   val defaultSettings = buildSettings ++ Seq(
-    resolvers ++= DefaultOptions.resolvers(true))
+    resolvers ++= DefaultOptions.resolvers(true),
+    scalacOptions in compile ++= Seq("-encoding", "UTF-8", "-target:jvm-1.6", "-deprecation", "-feature", "-unchecked"))
 }
 
 object Version {
   val scala     = "2.10.0"
-  val scalaStm  = "0.7"
   val scalaTest = "2.0.M5b"
+  val caliper   = "0.5-rc1"
+  val eaio      = "3.2"
 }
 
 object Dependency {
-  val scalaStm  = "org.scala-stm" %% "scala-stm" % Version.scalaStm
-  val scalaTest = "org.scalatest" %% "scalatest" % Version.scalaTest % "test"
+  val scalaTest = "org.scalatest"      %% "scalatest" % Version.scalaTest % "test"
+  val caliper   = "com.google.caliper" %  "caliper"   % Version.caliper
+  val eaio      = "com.eaio.uuid"      %  "uuid"      % Version.eaio
 }
 
 object Dependencies {
   import Dependency._
 
-  val core = Seq(scalaStm, scalaTest)
+  val core = Seq(scalaTest)
+
+  val benchmark = Seq(caliper, eaio)
 }
 
 object UIDBuild extends Build {
@@ -39,5 +44,16 @@ object UIDBuild extends Build {
     id = "uid",
     base = file("."),
     settings = defaultSettings ++ Seq(
-      libraryDependencies ++= Dependencies.core))
+      libraryDependencies ++= Dependencies.core,
+      testOptions in Test += Tests.Argument("-oDF")))
+
+  lazy val benchmark = Project(
+    id = "benchmark",
+    base = file("benchmark"),
+    settings = defaultSettings ++ Seq(
+      libraryDependencies ++= Dependencies.benchmark,
+      fork in run := true,
+      javaOptions in run <++= (fullClasspath in Runtime) map { cp => Seq(
+        "-cp", sbt.Build.data(cp).mkString(":"), "-server", "-Xms128m", "-Xmx128m") })
+    ).dependsOn(uid)
 }

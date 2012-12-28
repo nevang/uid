@@ -1,33 +1,54 @@
 package gr.jkl.uid
 
-import scala.concurrent.stm.Ref 
-
 /** A thread safe Id Generator. */
-class Generator(val node: Long)(implicit val scheme: Scheme) {
+@throws(classOf[IllegalArgumentException])
+class Generator(val node: Long, val scheme: Scheme) {
   require(node >= 0L && node <= scheme.maxNode)
 
   /** Generates a new Id. */
-  def newId = pack(nextTimeAndSequence)
+  final def newId = new Id(generateLong)
 
-  /** Gets the current time (can be overriden for testing). */
+  /** Gets the current time. */
   protected def currentTimeMillis = System.currentTimeMillis
 
-  private[this] val pack = (scheme.pack(node)(_, _)).tupled
+  private[this] var lastLong: Long = partialFirstMillisLong ^ Long.MinValue
 
-  private[this] val timestampAndSequence = Ref(-1L, -1L)
+  /** The first Id of a ms for the provided node without the timestamp part. */
+  private[this] val partialFirstMillisLong = scheme.packNode(node) // | 0L
 
-  private[this] def nextTimeAndSequence =
-    // A single operation atomic block, first updates the Ref, then gets the pair
-    timestampAndSequence.single transformAndGet { 
-    val now = currentTimeMillis 
-    _ match {
-      // Fresh millisecond: update time and reset sequence
-      case (t, _) if (t < now) => (now, 0L)    
-      // Sequence hasn't exceeded limit, same millisecond or clock back in 
-      // time: keep previous time and advance sequence
-      case (t, s) if (s < scheme.maxSequence) => (t, s + 1L) 
-      // Sequence exceeded limit: move one millisecond forward and reset sequence
-      case (t, _) => (t + 1L, 0L)
-    }
+  /** Generates a Long for the creation of an Id. */
+  private[this] def generateLong = synchronized {
+    lastLong = nextLong(currentTimeMillis, lastLong)
+    lastLong
   }
+    
+  /** Calculates the next Long based on a timestamp and the previous Long. */
+  private[this] def nextLong(timestamp: Long, previous: Long) = {
+    val currentPackedTimestamp = scheme.packTimestamp(timestamp)
+    val lastUnpackedSequence = scheme.unpackSequence(previous)
+    val nextPackedTimestamp = scheme.packTimestamp(
+      scheme.unpackTimestamp(previous) + 1L)
+    
+      if (currentPackedTimestamp > previous)
+        partialFirstMillisLong | currentPackedTimestamp
+      else if (lastUnpackedSequence < scheme.maxSequence)
+       previous + 1L
+      else 
+        partialFirstMillisLong | nextPackedTimestamp
+  }
+
 }
+
+/** Factory for [[gr.jkl.uid.Generator Generator]] instances. */
+object Generator {
+
+  /** Creates a [[gr.jkl.uid.Generator Generator]] instance. */
+  @throws(classOf[IllegalArgumentException])
+  def apply(node: Long)(implicit scheme: Scheme): Generator = 
+    new GeneratorImpl(node, scheme)
+}
+
+/** Uid Generator exception. */
+case class GeneratorException(message: String) extends RuntimeException(message)
+
+private[uid] final class GeneratorImpl(n: Long, s: Scheme) extends Generator(n, s)

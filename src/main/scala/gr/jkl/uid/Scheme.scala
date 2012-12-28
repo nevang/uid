@@ -32,32 +32,45 @@ class Scheme(
   final val maxSequence: Long = maxValue(sequenceBits)
 
   /** Extracts the timestamp of an Id. */
-  final def unpackTimestamp(id: Id): Long = 
-    ((id.underlying ^ Long.MinValue) >>> (nodeBits + sequenceBits)) + epoch
+  final def getTimestamp(id: Id): Long = unpackTimestamp(id.underlying)
 
   /** Extracts the node of an Id. */
-  final def unpackNode(id: Id): Long = 
-    (id.underlying >> sequenceBits) & maxNode
-
+  final def getNode(id: Id): Long = unpackNode(id.underlying)
+    
   /** Extracts the sequence of an Id. */
-  final def unpackSequence(id: Id): Long = id.underlying & maxSequence
+  final def getSequence(id: Id): Long = unpackSequence(id.underlying)
 
-  /** Creates an Id with the provided node, timestamp and sequence.
-    * @todo Add exception.
-    */
-  final def pack(node: Long)(timestamp: Long, sequence: Long): Id =
-    if (timestamp <= maxTimestamp && timestamp >= epoch)
-      new Id(compose(packNode(node))(timestamp, sequence))
-    else ???
+  /** Creates an Id with the provided node, timestamp and sequence. */
+  @throws(classOf[IllegalArgumentException])
+  final def create(timestamp: Long, node: Long, sequence: Long): Id = {
+    require(node >= 0 && node <= maxNode, "Node out of scheme's limits.")
+    require(timestamp >= epoch && timestamp <= maxTimestamp, "Timestamp out of scheme's limits.")
+    require(sequence >= 0 && node <= maxSequence, "Sequence out of scheme's limits.")
+    new Id(packTimestamp(timestamp) | packNode(node) | sequence)
+  }
 
-  private[this] val timestampLeftShift = nodeBits + sequenceBits
+  /** Unpacks the timestamp from an Id in Long type. */
+  private[uid] final def unpackTimestamp(long: Long): Long = 
+    ((long ^ Long.MinValue) >>> timestampShift) + epoch
 
-  private[this] def packNode(node: Long) = (node & maxNode) << sequenceBits
+  /** Unpacks the node from an Id in Long type. */
+  private[uid] final def unpackNode(long: Long): Long =
+    (long >> sequenceBits) & maxNode
 
-  private[this] def compose(nodePartition: Long)(timestamp: Long, sequence: Long) =
-    (((timestamp - epoch) << timestampLeftShift) | nodePartition | 
-      (sequence & maxSequence)) ^ Long.MinValue
+  /** Unpacks the sequence from an Id in Long type. */
+  private[uid] final def unpackSequence(long: Long): Long = long & maxSequence
 
+  /** Creates a partial Id in Long type with the given node. */
+  private[uid] final def packNode(node: Long) = node << sequenceBits
+
+  /** Creates a partial Id in Long type with the given timestamp. */
+  private[uid] final def packTimestamp(timestamp: Long) = 
+    ((timestamp - epoch) << timestampShift) ^ Long.MinValue
+
+  /** The number of bites the timestamp is shifted. */
+  private[this] val timestampShift = nodeBits + sequenceBits
+ 
+  /** Calculates the max number for the provided bits. */
   private[this] def maxValue(bits: Long): Long = (-1L ^ (-1L << bits))  
 
 }
