@@ -45,6 +45,7 @@ object UIDBuild extends Build {
     base = file("."),
     settings = defaultSettings ++ Seq(
       libraryDependencies ++= Dependencies.core,
+      parallelExecution in Test := false,
       testOptions in Test += Tests.Argument("-oDF")))
 
   lazy val benchmark = Project(

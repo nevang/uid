@@ -45,7 +45,7 @@ class Scheme(
   final def create(timestamp: Long, node: Long, sequence: Long): Id = {
     require(node >= 0 && node <= maxNode, "Node out of scheme's limits.")
     require(timestamp >= epoch && timestamp <= maxTimestamp, "Timestamp out of scheme's limits.")
-    require(sequence >= 0 && node <= maxSequence, "Sequence out of scheme's limits.")
+    require(sequence >= 0 && sequence <= maxSequence, "Sequence out of scheme's limits.")
     new Id(packTimestamp(timestamp) | packNode(node) | sequence)
   }
 
