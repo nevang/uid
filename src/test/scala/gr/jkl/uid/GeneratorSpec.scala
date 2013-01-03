@@ -27,15 +27,15 @@ class GeneratorSpec extends FeatureSpec
       Then("each ID should include the related node")
       ids foreach { t =>
         val (node, id) = t
-        id.node should be (node)
+        id.node should equal (node)
       }
     }
 
     scenario("the number of IDs produced on one millisecond exceeds limit") {
       Given("an ID Generator operating on one millisecond")
       val aMillisecond: Long = randomTimestamp
-      val idGenerator = new Generator(randomNode, scheme) {
-        override val currentTimeMillis = aMillisecond
+      val idGenerator = new AbstractGenerator(randomNode, scheme, -1L, 0L) {
+        val currentTimeMillis = aMillisecond
       }
 
       When("it generates IDs up to the limit (" + (scheme.maxSequence + 1) + ")")
@@ -46,30 +46,28 @@ class GeneratorSpec extends FeatureSpec
       Then("its ID should include a sequential number")
       ids foreach { t =>
         val (idx, id) = t 
-        id.sequence should be (idx)
+        id.sequence should equal (idx)
       }
 
-      When("it generates the next Id")
+      When("it generates the next ID")
       val id = idGenerator.newId
 
       Then("it should have sequence equal to 0")
-      id.sequence should be (0L)
+      id.sequence should equal (0L)
 
       And("its timestamp should be increased by 1 millisecond")
-      id.timestamp should be (aMillisecond + 1L)
+      id.timestamp should equal (aMillisecond + 1L)
     }
 
     scenario("IDs are produced on various momments in time") {
-      val iterations = 50000
+      val iterations = 100000
 
       Given("various momments in time")
-      val clock = new FakeClock
-      
+      val clock = new FakeClock  
       val timestamps = epoch :: List.fill(iterations)(randomTimestamp).sorted :::
         List(scheme.maxTimestamp)
-
-      val idGenerator = new Generator(randomNode, scheme) {
-          override def currentTimeMillis = clock.currentTimeMillis
+      val idGenerator = new AbstractGenerator(randomNode, scheme, -1L, 0L) {
+          def currentTimeMillis = clock.currentTimeMillis
         }
 
       When("a Generator is producing an ID")
@@ -78,60 +76,154 @@ class GeneratorSpec extends FeatureSpec
         (t -> idGenerator.newId)
       }
 
-      Then("the ID should include the related timestamp")
+      Then("each ID should include the related timestamp")
       ids foreach { t =>
         val (timestamp, id) = t 
-        id.timestamp should be (timestamp)
+        id.timestamp should equal (timestamp)
       }
     }
   }
 
-  feature("Generator should produce unique IDs under any circumstances") {
+  feature("Generator produces unique IDs under any circumstances") {
 
     scenario("IDs are produced on multiple threads") {
       val conductor = new Conductor
       import conductor._
       val threads = 6
-      val idsPerThread = 20000
+      val idsPerThread = 50000
+      val idsCount = threads * idsPerThread
       class IdHolder {
         var list: List[Id] = Nil
       } 
       val idHolders = List.fill(threads)(new IdHolder)
 
-      Given("an ID Generator")
-      val idGenerator = Generator(randomNode)
+      Given("an ID Generator for a random node")
+      val node = randomNode
+      val idGenerator = Generator(node)
       
-      When("IDs are produced by multiple threads")
+      When(s"$idsCount IDs are produced by $threads threads")
       def createIds(idHolder: IdHolder) {
         idHolder.list = List.fill(idsPerThread)(idGenerator.newId)
       } 
+      val start = System.currentTimeMillis 
       idHolders.foreach {
         i => thread(createIds(i))
       }
 
-      Then("all IDs should be unique")
       whenFinished {
-        val idsCount = threads * idsPerThread
+        val stop = System.currentTimeMillis
+        val time = stop - start
         val ids = idHolders.foldLeft(List.empty[Id])(_ ::: _.list).toSet
+        Then("all IDs should be unique")
         ids should have size (idsCount)
+        And("all IDs should contain the correct data")
+        ids foreach { id =>
+          id.node should equal (node)
+        }
+        info(s"Info: Generated $idsCount unique Ids in $time milliseconds")
       }
     }
 
-    scenario("the clock may go back in time") {
+    scenario("The clock goes back in time") {
       Given("an ID produced by a Generator")
       val clock = new FakeClock
-      val idGenerator = new Generator(0, scheme) {
-        override def currentTimeMillis = clock.currentTimeMillis
+      val idGenerator = new AbstractGenerator(randomNode, scheme, -1L, 0L) {
+        def currentTimeMillis = clock.currentTimeMillis
       }
       val id = idGenerator.newId
       
-      When("lock goes back in time")
-      clock.setOffset(- util.Random.nextInt(150) - 50)
+      When("clock goes back in time")
+      clock.setOffset(- util.Random.nextInt(10000) - 20000)
 
       Then("the next ID should be produced with the timestamp of the previous ID")
       val nextId = idGenerator.newId
-      nextId.timestamp should be (id.timestamp)
+      nextId.timestamp should equal (id.timestamp)
+
+      And("its sequence should be increased by 1")
+      nextId.sequence should equal (id.sequence + 1)
+    }
+
+     scenario("Generator is restarted while clock goes back in time") {
+      Given("an Id generator instantiated with the timestamp, and the sequence of the last Id while clock goes back in time")
+      val lastTimestamp = randomTimestamp
+      val lastSequence = random(0, scheme.maxSequence - 1)
+      val clock = new FakeClock
+      val idGenerator = new AbstractGenerator(randomNode, scheme, lastTimestamp, lastSequence) {
+        def currentTimeMillis = clock.currentTimeMillis
+      }
+      clock.setFixedTime(lastTimestamp - 100L)
+
+      When("an Id is generated")
+      val nextId = idGenerator.newId
+
+      Then("the Id should be produced with the timestamp of the last Id")
+      nextId.timestamp should equal (lastTimestamp)
+
+      And("its sequence should be increased by 1")
+      nextId.sequence should equal (lastSequence + 1)
     }
   }
 
+  feature("Generator generates IDs only under the provided Scheme's limits") {
+
+    scenario("Generator is called before Scheme's epoch") {
+      Given("an ID Generator")
+      val clock = new FakeClock
+      val idGenerator = new AbstractGenerator(randomNode, scheme, -1L, 0L) {
+        def currentTimeMillis = clock.currentTimeMillis
+      }
+
+      When("is is asked to generate IDs before Scheme's epoch")
+      val results = 
+        (0L :: List.fill(10000)(random(0, epoch - 1)).sorted ::: List(epoch - 1)) map { t =>
+          clock.setFixedTime(t)
+          evaluating { idGenerator.newId }
+        }
+
+      Then("it should throw exceptions")
+      results foreach { r =>
+        r should produce [GeneratorException]
+      }
+    }
+
+    scenario("Generator is called after the end of Scheme's time") {
+      Given("an Id Generator")
+      val clock = new FakeClock
+      val idGenerator = new AbstractGenerator(randomNode, scheme, -1L, 0L) {
+        def currentTimeMillis = clock.currentTimeMillis
+      }
+
+      When("is is asked to generate IDs after the end of Scheme's time")
+      val results = 
+        ((scheme.maxTimestamp + 1) :: 
+          List.fill(10000)(random(scheme.maxTimestamp + 1, Long.MaxValue)).sorted ::: 
+          List(Long.MaxValue)) map { t =>
+          clock.setFixedTime(t)
+          evaluating { idGenerator.newId }
+        }
+      
+      Then("it should throw exceptions")
+      results foreach { r =>
+        r should produce [GeneratorException]
+      }
+    }
+
+    scenario("Generator produces the last ID of a Scheme") {
+      Given("an ID Generator having produced the last Scheme's ID")
+      val clock = new FakeClock
+      clock.setFixedTime(scheme.maxTimestamp)
+      val idGenerator = new AbstractGenerator(randomNode, scheme, -1L, 0L) {
+        def currentTimeMillis = clock.currentTimeMillis
+      }
+      (0 to scheme.maxSequence.toInt) foreach { s => 
+        idGenerator.newId.sequence should equal (s)
+      }
+
+      When("is is asked to generate a new ID")
+      val result = evaluating { idGenerator.newId }
+      
+      Then("it should throw an exception")
+      result should produce [GeneratorException]
+    }
+  }
 }

@@ -13,7 +13,8 @@ object Settings {
 
   val defaultSettings = buildSettings ++ Seq(
     resolvers ++= DefaultOptions.resolvers(true),
-    scalacOptions in compile ++= Seq("-encoding", "UTF-8", "-target:jvm-1.6", "-deprecation", "-feature", "-unchecked"))
+    scalacOptions in Compile ++= Seq("-encoding", "UTF-8", "-target:jvm-1.6", "-deprecation", "-feature", "-unchecked"),
+    shellPrompt := DefaultOptions.shellPrompt(buildVersion))
 }
 
 object Version {
@@ -46,7 +47,8 @@ object UIDBuild extends Build {
     settings = defaultSettings ++ Seq(
       libraryDependencies ++= Dependencies.core,
       parallelExecution in Test := false,
-      testOptions in Test += Tests.Argument("-oDF")))
+      testOptions in Test += Tests.Argument("-oDF"),
+      scalacOptions in (Compile, doc) ++= DefaultOptions.scaladoc("UID", buildVersion) ++ Seq("-groups")))
 
   lazy val benchmark = Project(
     id = "benchmark",

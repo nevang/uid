@@ -1,16 +1,25 @@
 package gr.jkl.uid
 
-/** The scheme of the Ids.
+/** Specification of an Id implementation.
   *
-  * @param timestampBits The number of bits devoted for the ids timestamp.
-  * @param nodeBits The number of bits devoted for the ids node.
-  * @param sequenceBits The number of bits devoted for the ids sequence.
-  * @param epoch The beginning timestamp of this id scheme.
-  * @throws IllegalArgumentException If timestamp, node ande sequence bits 
+  * An [[gr.jkl.uid.Id! Id]] encodes its generation time and the node which 
+  * created it. An incremental number is also included in order to differntiate  
+  * Ids produced on the same millisecond. The timestamp, node and the sequence 
+  * data are packed into 64-bits and the Scheme specifies the number of bits of 
+  * each parameter. Additionaly, a Scheme specifies the Ids epoch.
+  *
+  * A Scheme is required by various parts of this library so it's suggested
+  * to define it implicitly.
+  *
+  * @param timestampBits The number of bits devoted for the Ids timestamp.
+  * @param nodeBits The number of bits devoted for the Ids node.
+  * @param sequenceBits The number of bits devoted for the Ids sequence.
+  * @param epoch The beginning timestamp of this Id Scheme.
+  * @throws IllegalArgumentException If timestamp, node and sequence bits 
   * aren't greater than 0, their sum isn't 64 or epoch is negative.
   */
 @throws(classOf[IllegalArgumentException])
-class Scheme(
+final class Scheme(
   val timestampBits: Long, 
   val nodeBits: Long, 
   val sequenceBits: Long,
@@ -22,55 +31,51 @@ class Scheme(
 
   require(epoch >= 0L, "Epoch must not be negative")
 
+  require((Long.MaxValue - epoch) >= maxValue(timestampBits), 
+    "Scheme max timestamp comes after end of time")
+
+  /** Checks if a timestamp is valid for this Scheme. */
+  def isValidTimestamp(timestamp: Long) = 
+    timestamp >= epoch && timestamp <= maxTimestamp
+
+  /** Checks if a node is valid for this Scheme. */
+  def isValidNode(node: Long) = node >= 0 && node <= maxNode
+
+  /** Checks if a sequence is valid for this Scheme. */
+  def isValidSequence(sequence: Long) = 
+    sequence >= 0 && sequence <= maxSequence
+
   /** The max timestamp of this Id Scheme. */
-  final val maxTimestamp: Long = maxValue(timestampBits) + epoch
+  val maxTimestamp: Long = maxValue(timestampBits) + epoch
 
   /** The max node of this Id Scheme. */
-  final val maxNode: Long = maxValue(nodeBits)
+  val maxNode: Long = maxValue(nodeBits)
   
   /** The max sequence of this Id Scheme. */
-  final val maxSequence: Long = maxValue(sequenceBits)
-
-  /** Extracts the timestamp of an Id. */
-  final def getTimestamp(id: Id): Long = unpackTimestamp(id.underlying)
-
-  /** Extracts the node of an Id. */
-  final def getNode(id: Id): Long = unpackNode(id.underlying)
-    
-  /** Extracts the sequence of an Id. */
-  final def getSequence(id: Id): Long = unpackSequence(id.underlying)
-
-  /** Creates an Id with the provided node, timestamp and sequence. */
-  @throws(classOf[IllegalArgumentException])
-  final def create(timestamp: Long, node: Long, sequence: Long): Id = {
-    require(node >= 0 && node <= maxNode, "Node out of scheme's limits.")
-    require(timestamp >= epoch && timestamp <= maxTimestamp, "Timestamp out of scheme's limits.")
-    require(sequence >= 0 && sequence <= maxSequence, "Sequence out of scheme's limits.")
-    new Id(packTimestamp(timestamp) | packNode(node) | sequence)
-  }
+  val maxSequence: Long = maxValue(sequenceBits)
 
   /** Unpacks the timestamp from an Id in Long type. */
-  private[uid] final def unpackTimestamp(long: Long): Long = 
+  private[uid] def unpackTimestamp(long: Long) = 
     ((long ^ Long.MinValue) >>> timestampShift) + epoch
 
   /** Unpacks the node from an Id in Long type. */
-  private[uid] final def unpackNode(long: Long): Long =
+  private[uid] def unpackNode(long: Long) =
     (long >> sequenceBits) & maxNode
 
   /** Unpacks the sequence from an Id in Long type. */
-  private[uid] final def unpackSequence(long: Long): Long = long & maxSequence
+  private[uid] def unpackSequence(long: Long) = long & maxSequence
 
   /** Creates a partial Id in Long type with the given node. */
-  private[uid] final def packNode(node: Long) = node << sequenceBits
+  private[uid] def packNode(node: Long) = node << sequenceBits
 
   /** Creates a partial Id in Long type with the given timestamp. */
-  private[uid] final def packTimestamp(timestamp: Long) = 
+  private[uid] def packTimestamp(timestamp: Long) = 
     ((timestamp - epoch) << timestampShift) ^ Long.MinValue
 
   /** The number of bites the timestamp is shifted. */
-  private[this] val timestampShift = nodeBits + sequenceBits
- 
-  /** Calculates the max number for the provided bits. */
-  private[this] def maxValue(bits: Long): Long = (-1L ^ (-1L << bits))  
+  private[uid] val timestampShift = nodeBits + sequenceBits
 
+  /** Returns this Scheme as a String */
+  override def toString = 
+    s"Scheme($timestampBits, $nodeBits, $sequenceBits, $epoch)"
 }

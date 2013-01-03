@@ -17,12 +17,12 @@ class Benchmark extends SimpleScalaBenchmark {
     atomicLong = new AtomicLong
   }
   
-  def timeGenerator(reps: Int) = repeat(reps) {
+  def timeIdGenerator(reps: Int) = repeat(reps) {
     generator.newId.underlying // else it gets packed
   }
 
-  def timeAtomicLong(reps: Int) = repeat(reps) {
-    atomicLong.getAndIncrement
+  def timeLongGenerator(reps: Int) = repeat(reps) {
+    generator.newLong
   }
 
   def timeJavaUUID(reps: Int) = repeat(reps) {
@@ -31,6 +31,14 @@ class Benchmark extends SimpleScalaBenchmark {
 
   def timeeaioUUID(reps: Int) = repeat(reps) {
     new EAIOUUID
+  }
+
+  def timeSystemCurrentTime(reps: Int) = repeat(reps) {
+   System.currentTimeMillis
+  }
+
+  def timeAtomicLong(reps: Int) = repeat(reps) {
+    atomicLong.getAndIncrement
   }
   
   override def tearDown() {
