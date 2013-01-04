@@ -9,7 +9,8 @@ object Settings {
   val buildSettings = Defaults.defaultSettings ++ Seq(
     organization := buildOrganization,
     version      := buildVersion,
-    scalaVersion := buildScalaVersion)
+    scalaVersion := buildScalaVersion,
+    crossVersion := CrossVersion.binary)
 
   val defaultSettings = buildSettings ++ Seq(
     resolvers ++= DefaultOptions.resolvers(true),
@@ -38,13 +39,46 @@ object Dependencies {
   val benchmark = Seq(caliper, eaio)
 }
 
+object Publish {
+  val nexus = "https://oss.sonatype.org/"
+
+  val publishSettings = Seq(
+    publishMavenStyle := true,
+    publishTo <<= version { (v: String) =>
+      if (v.trim.endsWith("SNAPSHOT"))
+        Some("snapshots" at nexus + "content/repositories/snapshots")
+      else
+        Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+    },
+    publishArtifact in Test := false,
+    licenses := Seq("Simplified BSD License" -> url("http://opensource.org/licenses/BSD-2-Clause")),
+    homepage := Some(url("https://github.com/nevang/uid")),
+    pomIncludeRepository := { _ => false },
+    pomExtra := (
+      <scm>
+        <connection>scm:git:git@github.com:nevang/uid.git</connection>
+        <developerConnection>scm:git:git@github.com:nevang/uid.git</developerConnection>
+        <url>git@github.com:nevang/uid.git</url>
+      </scm>
+      <developers>
+        <developer>
+          <id>nevang</id>
+          <name>Nikolas Evangelopoulos</name>
+          <url>http://github.com/nevang</url>
+        </developer>
+      </developers>
+    )
+  )
+}
+
 object UIDBuild extends Build {
   import Settings._
+  import Publish._
 
   lazy val uid = Project(
     id = "uid",
     base = file("."),
-    settings = defaultSettings ++ Seq(
+    settings = defaultSettings ++ publishSettings ++ Seq(
       libraryDependencies ++= Dependencies.core,
       parallelExecution in Test := false,
       testOptions in Test += Tests.Argument("-oDF"),
