@@ -2,14 +2,10 @@ package gr.jkl.uid
 
 /** Generates Ids based on a Scheme for a specific node.
   *
-  *`newId` generates unique [[gr.jkl.uid.Id! Ids]] while `newLong` generates 
-  * unique Longs. As Id is a 
-  * [[http://docs.scala-lang.org/overviews/core/value-classes.html Value Class]] 
-  * both methods and data types perform equally.
+  *`newId` generates unique Ids while `newLong` generates unique Longs. 
   * 
   * There is a thread-safe non-blocking Generator's implementation and you can  
-  * construct an instance of it using the [[gr.jkl.uid.Generator$ companion object]] 
-  * factory methods.
+  * construct an instance of it using the companion object factory methods.
   */
 trait Generator {
 

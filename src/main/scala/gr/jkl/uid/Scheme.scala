@@ -2,11 +2,11 @@ package gr.jkl.uid
 
 /** Specification of an Id implementation.
   *
-  * An [[gr.jkl.uid.Id! Id]] encodes its generation time and the node which 
-  * created it. An incremental number is also included in order to differntiate  
-  * Ids produced on the same millisecond. The timestamp, node and the sequence 
-  * data are packed into 64-bits and the Scheme specifies the number of bits of 
-  * each parameter. Additionaly, a Scheme specifies the Ids epoch.
+  * An Id encodes its generation time and the node which  created it. An 
+  * incremental number is also included in order to differntiate Ids produced on 
+  * the same millisecond. The timestamp, node and the sequence data are packed 
+  * into 64-bits and the Scheme specifies the number of bits of each parameter. 
+  * Additionaly, a Scheme specifies the Ids epoch.
   *
   * A Scheme is required by various parts of this library so it's suggested
   * to define it implicitly.

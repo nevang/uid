@@ -1,20 +1,20 @@
 package gr.jkl.uid
 
-/** Value class of 64-bit Ids with underlying type of Long.
+/** Wrapper for 64-bit Ids with underlying type of Long.
   *
   * An Id instance doesn't know about the way it is structured. This depends on  
-  * the [[gr.jkl.uid.Scheme Scheme]] of its [[gr.jkl.uid.Generator! Generator]].
-  * So, the methods which extract parameters (e.g. `timestamp`, `node` and 
-  * `sequence`) from an Id require an implicit Scheme. Consequently, those 
-  * methods will return different results depending  on the provided Scheme.
+  * the Scheme of its Generator. So, the methods which extract parameters (e.g. 
+  * `timestamp`, `node` and `sequence`) from an Id require an implicit Scheme. 
+  * Consequently, those methods will return different results depending  on the 
+  * provided Scheme.
   * 
   * Generally, when an Id is constructed by a timestamp, a node and a sequence
   * a Scheme is required. On the other hand, an Id can be constructed by
   * a Long or a String without a Scheme.
   *
   * Ids are sorted the same way as Ids, as Longs and as Strings. The default 
-  * Ordering, implict in the [[gr.jkl.uid.Id$ companion object]], sorts Ids 
-  * first by their timestamp, then by their node and then by their sequence.
+  * Ordering, implict in the companion object, sorts Ids first by their 
+  * timestamp, then by their node and then by their sequence.
   *
   * @param underlying The Long behind this Id.
   */

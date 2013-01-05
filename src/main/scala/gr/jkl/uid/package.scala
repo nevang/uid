@@ -2,10 +2,10 @@ package gr.jkl
 
 /** uid is a library for the generation and handling of unique 64-bit Ids.
   * 
-  * Each [[gr.jkl.uid.Id Id]] encodes a timestamp, a node and a sequence. 
+  * Each [[gr.jkl.uid.Id]] encodes a timestamp, a node and a sequence. 
   * Specific implementations are achieved by defining a 
-  * [[gr.jkl.uid.Scheme Scheme]]. Id creation is handled by a 
-  * [[gr.jkl.uid.Generator Generator]].
+  * [[gr.jkl.uid.Scheme]]. Id creation is handled by a 
+  * [[gr.jkl.uid.Generator]].
   *
   * @example {{{
   * // Define an implicit Scheme
