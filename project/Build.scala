@@ -86,7 +86,7 @@ object UIDBuild extends Build {
       libraryDependencies ++= Dependencies.core,
       parallelExecution in Test := false,
       testOptions in Test += Tests.Argument("-oDF"),
-      scalacOptions in (Compile, doc) ++= DefaultOptions.scaladoc("UID", buildVersion) ++ Seq("-groups")))
+      scalacOptions in (Compile, doc) ++= DefaultOptions.scaladoc("UID", buildVersion)))
 
   lazy val benchmark = Project(
     id = "benchmark",
