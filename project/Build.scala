@@ -4,7 +4,7 @@ import sbt.Keys._
 object Settings {
   val buildOrganization = "gr.jkl"
   val buildVersion      = "1.0-SNAPSHOT"
-  val buildScalaVersion =  Version.scala
+  val buildScalaVersion = Version.scala
 
   val buildSettings = Defaults.defaultSettings ++ Seq(
     organization := buildOrganization,
@@ -43,6 +43,10 @@ object Publish {
   val nexus = "https://oss.sonatype.org/"
 
   val publishSettings = Seq(
+    organizationName := "jkl",
+    organizationHomepage := None,
+    homepage := Some(url("https://github.com/nevang/uid")),
+    licenses := Seq("Simplified BSD License" -> url("http://opensource.org/licenses/BSD-2-Clause")),
     publishMavenStyle := true,
     publishTo <<= version { (v: String) =>
       if (v.trim.endsWith("SNAPSHOT"))
@@ -51,8 +55,6 @@ object Publish {
         Some("releases"  at nexus + "service/local/staging/deploy/maven2")
     },
     publishArtifact in Test := false,
-    licenses := Seq("Simplified BSD License" -> url("http://opensource.org/licenses/BSD-2-Clause")),
-    homepage := Some(url("https://github.com/nevang/uid")),
     pomIncludeRepository := { _ => false },
     pomExtra := (
       <scm>
@@ -79,6 +81,8 @@ object UIDBuild extends Build {
     id = "uid",
     base = file("."),
     settings = defaultSettings ++ publishSettings ++ Seq(
+      name := "uid",
+      description := "64-bit Ids for Scala",
       libraryDependencies ++= Dependencies.core,
       parallelExecution in Test := false,
       testOptions in Test += Tests.Argument("-oDF"),
