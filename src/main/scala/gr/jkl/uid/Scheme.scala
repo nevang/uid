@@ -77,5 +77,5 @@ final class Scheme(
 
   /** Returns this Scheme as a String */
   override def toString = 
-    s"Scheme($timestampBits, $nodeBits, $sequenceBits, $epoch)"
+    "Scheme(" + timestampBits + ", " + nodeBits + ", " + sequenceBits + ", " + epoch + ")"
 }

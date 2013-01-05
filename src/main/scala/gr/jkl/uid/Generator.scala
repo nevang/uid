@@ -35,7 +35,7 @@ trait Generator {
 
   /** Returns this Generator as a String */
   override def toString = 
-    s"Generator($node, $scheme)"
+    "Generator(" + node + ", " + scheme + ")"
 }
 
 /** Factory for Generator instances. */

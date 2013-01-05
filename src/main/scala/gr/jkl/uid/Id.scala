@@ -18,7 +18,7 @@ package gr.jkl.uid
   *
   * @param underlying The Long behind this Id.
   */
-class Id(val underlying: Long) extends AnyVal  {
+final class Id(val underlying: Long) {
   
   /** Extracts the timestamp of this Id. */
   def timestamp(implicit scheme: Scheme) = scheme.unpackTimestamp(underlying)
@@ -40,6 +40,12 @@ class Id(val underlying: Long) extends AnyVal  {
 
   /** Returns true if this Id is greater than or equal to the provided Id. */
   def >= (that: Id) = underlying >= that.underlying
+
+  //** Returns true if given object is an Id with the same underlying with this. */
+  override def equals (that: Any) = that match {
+    case id: Id => underlying == id.underlying
+    case _ => false
+  }
 
   /** Returns a base64 like String representation of this Id. */
   override def toString = Codec.encode(underlying ^ Long.MinValue)

@@ -10,17 +10,17 @@ object Settings {
     organization := buildOrganization,
     version      := buildVersion,
     scalaVersion := buildScalaVersion,
-    crossVersion := CrossVersion.binary)
+    crossScalaVersions := Seq("2.9.2", "2.9.1", "2.9.0-1", "2.8.2", "2.8.1"))
 
   val defaultSettings = buildSettings ++ Seq(
     resolvers ++= DefaultOptions.resolvers(true),
-    scalacOptions in Compile ++= Seq("-encoding", "UTF-8", "-target:jvm-1.6", "-deprecation", "-feature", "-unchecked"),
+    scalacOptions in Compile ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked"),
     shellPrompt := DefaultOptions.shellPrompt(buildVersion))
 }
 
 object Version {
-  val scala     = "2.10.0"
-  val scalaTest = "2.0.M5b"
+  val scala     = "2.9.2"
+  val scalaTest = "1.8"
   val caliper   = "0.5-rc1"
   val eaio      = "3.2"
 }
