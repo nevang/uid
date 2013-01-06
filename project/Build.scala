@@ -42,7 +42,15 @@ object Dependencies {
 object Publish {
   val nexus = "https://oss.sonatype.org/"
 
+  val root = file(".")
+
+  def mapToBase(base: String, filenames: String*): Seq[(File,String)] = {
+    val path = base + (if (base.isEmpty || base.endsWith("/")) "" else "/")
+    filenames.map( filename => (root / filename) -> ( path + filename))
+  }
+
   val publishSettings = Seq(
+    startYear := Some(2012),
     organizationName := "jkl",
     organizationHomepage := None,
     homepage := Some(url("https://github.com/nevang/uid")),
@@ -54,6 +62,8 @@ object Publish {
       else
         Some("releases"  at nexus + "service/local/staging/deploy/maven2")
     },
+    mappings in (Compile, packageBin) ++= mapToBase("META-INF", "LICENSE", "NOTICE"),
+    mappings in (Compile, packageSrc) ++= mapToBase("META-INF", "LICENSE", "NOTICE"),
     publishArtifact in Test := false,
     pomIncludeRepository := { _ => false },
     pomExtra := (
@@ -81,7 +91,6 @@ object UIDBuild extends Build {
     id = "uid",
     base = file("."),
     settings = defaultSettings ++ publishSettings ++ Seq(
-      name := "uid",
       description := "64-bit Ids for Scala",
       libraryDependencies ++= Dependencies.core,
       parallelExecution in Test := false,
