@@ -10,7 +10,7 @@ class GeneratorSpec extends FeatureSpec
   with Conductors
   with RandomIdParameters {
 
-  implicit val scheme = new Scheme(timestampBits, nodeBits, sequenceBits, epoch)
+  implicit val scheme = Scheme(timestampBits, nodeBits, sequenceBits, epoch)
 
   feature("Generator generates IDs depended on time, node and sequence") {
     

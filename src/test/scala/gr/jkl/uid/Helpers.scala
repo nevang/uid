@@ -4,16 +4,24 @@ import scala.util.Random
 import org.scalatest.matchers.{ BePropertyMatcher, BePropertyMatchResult }
 
 trait RandomIdParameters {
-  
-  val timestampBits: Long = Random.nextInt(8) + 38L 
-  
-  val sequenceBits: Long = Random.nextInt(8) + 8L        
 
-  val nodeBits = 64L - timestampBits - sequenceBits
+  def randomTimestampBits: Long = Random.nextInt(8) + 38L
+  
+  def randomSequenceBits: Long = Random.nextInt(8) + 8L
 
-  val epoch =  
-    random(math.max((System.currentTimeMillis + 1000000) - maxValue(timestampBits), 10000000), 
-      System.currentTimeMillis - 1000000)
+  def calculateNodeBits(tb: Long, sb: Long)=  64L - tb - sb
+
+  def randomEpoch(tb: Long): Long = 
+    random(math.max((System.currentTimeMillis + 1000000) - maxValue(tb), 
+      10000000), System.currentTimeMillis - 1000000)
+
+  val timestampBits: Long = randomTimestampBits
+  
+  val sequenceBits: Long = randomSequenceBits
+
+  val nodeBits = calculateNodeBits(timestampBits, sequenceBits)
+
+  val epoch = randomEpoch(timestampBits)
   
   def maxValue(bits: Long) = (-1L ^ (-1L << bits))
   
