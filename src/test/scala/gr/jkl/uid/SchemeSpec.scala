@@ -74,7 +74,7 @@ class SchemeSpec
         import java.io.{ ByteArrayOutputStream, ObjectOutputStream, 
           ByteArrayInputStream, InputStream, ObjectInputStream }
 
-        Given(s"$iterations Schemes")
+        given(iterations + " Schemes")
         val schemes = List.fill(iterations) {
           val timestampBits = randomTimestampBits
           val sequenceBits = randomSequenceBits
@@ -83,7 +83,7 @@ class SchemeSpec
           Scheme(timestampBits, nodeBits, sequenceBits, epoch)
         }
 
-        When("Schemes are serialized and desiralized")
+        when("Schemes are serialized and desiralized")
         val desiralizedSchemes = schemes map { scheme =>
           val out = new ByteArrayOutputStream
           val oos = new ObjectOutputStream(out)
