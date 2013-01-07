@@ -2,34 +2,37 @@ package gr.jkl.uid
 
 /** Specification of an Id implementation.
   *
-  * An Id encodes its generation time and the node which  created it. An 
-  * incremental number is also included in order to differntiate Ids produced on 
-  * the same millisecond. The timestamp, node and the sequence data are packed 
-  * into 64-bits and the Scheme specifies the number of bits of each parameter. 
-  * Additionaly, a Scheme specifies the Ids epoch.
+  * An Id encodes its generation time and the node which 
+  * created it. Ids also include an incremental number in order to differentiate  
+  * Ids produced on the same time unit. The timestamp, node and the sequence 
+  * data are packed into 64-bits and the Scheme specifies the number of bits of 
+  * each parameter. Additionally, a Scheme specifies the beginning of time of
+  * the Id implementation, a.k.a. its epoch.
   *
   * A Scheme is required by various parts of this library so it's suggested
   * to define it implicitly.
   *
-  * @param timestampBits The number of bits devoted for the Ids timestamp.
-  * @param nodeBits The number of bits devoted for the Ids node.
-  * @param sequenceBits The number of bits devoted for the Ids sequence.
-  * @param epoch The beginning timestamp of this Id Scheme.
+  * @param timestampBits The number of bits devoted to the Id timestamp.
+  * @param nodeBits The number of bits devoted to the Id node.
+  * @param sequenceBits The number of bits devoted to the Id sequence.
+  * @param epoch The beginning of time, in the Unix timeline, for this Scheme
+  * in milliseconds (milliseconds since Unix epoch).
   * @throws IllegalArgumentException If timestamp, node and sequence bits 
   * aren't greater than 0, their sum isn't 64 or epoch is negative.
   */
 @throws(classOf[IllegalArgumentException])
-final class Scheme(
-  val timestampBits: Long, 
-  val nodeBits: Long, 
-  val sequenceBits: Long,
-  val epoch: Long) {
+@SerialVersionUID(0L)
+final case class Scheme(
+  timestampBits: Long, 
+  nodeBits: Long, 
+  sequenceBits: Long,
+  epoch: Long) {
 
   require(timestampBits > 0 && nodeBits > 0 && sequenceBits > 0 && 
     timestampBits + nodeBits + sequenceBits == 64L, 
-    "Timestamp, Node and Sequence bits must be greater than 0 with sum equal to 64")
+    "Illegal timestamp, node and sequence bits")
 
-  require(epoch >= 0L, "Epoch must not be negative")
+  require(epoch >= 0L, "Epoch is negative")
 
   require((Long.MaxValue - epoch) >= maxValue(timestampBits), 
     "Scheme max timestamp comes after end of time")
@@ -45,7 +48,7 @@ final class Scheme(
   def isValidSequence(sequence: Long) = 
     sequence >= 0 && sequence <= maxSequence
 
-  /** The max timestamp of this Id Scheme. */
+  /** The max timestamp, in the Unix timeline, of this Id Scheme. */
   val maxTimestamp: Long = maxValue(timestampBits) + epoch
 
   /** The max node of this Id Scheme. */
@@ -55,15 +58,15 @@ final class Scheme(
   val maxSequence: Long = maxValue(sequenceBits)
 
   /** Unpacks the timestamp from an Id in Long type. */
-  private[uid] def unpackTimestamp(long: Long) = 
-    ((long ^ Long.MinValue) >>> timestampShift) + epoch
+  private[uid] def unpackTimestamp(id: Long) = 
+    ((id ^ Long.MinValue) >>> timestampShift) + epoch
 
   /** Unpacks the node from an Id in Long type. */
-  private[uid] def unpackNode(long: Long) =
-    (long >> sequenceBits) & maxNode
+  private[uid] def unpackNode(id: Long) =
+    (id >> sequenceBits) & maxNode
 
   /** Unpacks the sequence from an Id in Long type. */
-  private[uid] def unpackSequence(long: Long) = long & maxSequence
+  private[uid] def unpackSequence(id: Long) = id & maxSequence
 
   /** Creates a partial Id in Long type with the given node. */
   private[uid] def packNode(node: Long) = node << sequenceBits
@@ -74,8 +77,4 @@ final class Scheme(
 
   /** The number of bites the timestamp is shifted. */
   private[uid] val timestampShift = nodeBits + sequenceBits
-
-  /** Returns this Scheme as a String */
-  override def toString = 
-    "Scheme(" + timestampBits + ", " + nodeBits + ", " + sequenceBits + ", " + epoch + ")"
 }

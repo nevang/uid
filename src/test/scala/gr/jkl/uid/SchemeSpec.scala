@@ -16,7 +16,7 @@ class SchemeSpec
       
       scenario("Timestamp is extracted from an Id") {
         given("a Scheme")
-        val scheme = new Scheme(timestampBits, nodeBits, sequenceBits, epoch)
+        val scheme = Scheme(timestampBits, nodeBits, sequenceBits, epoch)
 
         when("it is used to create IDs for various timestamps")
         val ids = List.fill(iterations) {
@@ -34,7 +34,7 @@ class SchemeSpec
 
       scenario("Node is extracted from an ID") {
         given("a Scheme")
-        val scheme = new Scheme(timestampBits, nodeBits, sequenceBits, epoch)
+        val scheme = Scheme(timestampBits, nodeBits, sequenceBits, epoch)
 
         when("it is used to create IDs for various nodes")
         val ids = List.fill(iterations){
@@ -52,7 +52,7 @@ class SchemeSpec
 
       scenario("Sequence is extracted from an ID") {
         given("a Scheme")
-        val scheme = new Scheme(timestampBits, nodeBits, sequenceBits, epoch)
+        val scheme = Scheme(timestampBits, nodeBits, sequenceBits, epoch)
 
         when("it is used to create IDs for various sequences")
         val ids = List.fill(iterations){
@@ -66,6 +66,39 @@ class SchemeSpec
           val (sequence, maybeId) = t
           maybeId.value.sequence(scheme) should equal (sequence)
         }
+      }
+    }
+
+    feature("ID Scheme is serializable") {
+      scenario("Scheme is serialized and desialized") {
+        import java.io.{ ByteArrayOutputStream, ObjectOutputStream, 
+          ByteArrayInputStream, InputStream, ObjectInputStream }
+
+        Given(s"$iterations Schemes")
+        val schemes = List.fill(iterations) {
+          val timestampBits = randomTimestampBits
+          val sequenceBits = randomSequenceBits
+          val nodeBits = calculateNodeBits(timestampBits, sequenceBits)
+          val epoch = randomEpoch(timestampBits)
+          Scheme(timestampBits, nodeBits, sequenceBits, epoch)
+        }
+
+        When("Schemes are serialized and desiralized")
+        val desiralizedSchemes = schemes map { scheme =>
+          val out = new ByteArrayOutputStream
+          val oos = new ObjectOutputStream(out)
+          oos.writeObject(scheme)
+          oos.close
+          out
+        } map { serializedScheme =>
+          val pickled = serializedScheme.toByteArray();
+          val in = new ByteArrayInputStream(pickled);
+          val ois = new ObjectInputStream(in);
+          val o = ois.readObject();
+          o.asInstanceOf[Scheme]
+        }
+
+
       }
     }
   }

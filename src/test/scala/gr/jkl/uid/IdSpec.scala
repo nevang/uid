@@ -13,7 +13,7 @@ class IdSpec
 
     val iterations = 100000
 
-    implicit val scheme = new Scheme(timestampBits, nodeBits, sequenceBits, epoch)
+    implicit val scheme = Scheme(timestampBits, nodeBits, sequenceBits, epoch)
 
     feature("IDs are also represented as Strigs") {
       

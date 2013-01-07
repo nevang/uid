@@ -9,7 +9,7 @@ package gr.jkl
   *
   * @example {{{
   * // Define an implicit Scheme
-  * implicit val idScheme = new Scheme(42, 12, 10 , 1351728000000L)
+  * implicit val idScheme = Scheme(42, 12, 10 , 1351728000000L)
   *
   * // Construct a Generator for the node 0
   * val idGenerator = Generator(0L) 
