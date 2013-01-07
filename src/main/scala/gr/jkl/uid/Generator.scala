@@ -33,7 +33,7 @@ trait Generator {
   /** The Scheme which structures this Generator's Ids. */
   def scheme: Scheme
 
-  /** Returns this Generator as a String */
+  /** Returns this Generator as a String. */
   override def toString = 
     s"Generator($node, $scheme)"
 }
