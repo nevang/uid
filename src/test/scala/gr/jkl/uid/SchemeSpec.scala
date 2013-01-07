@@ -83,7 +83,7 @@ class SchemeSpec
           Scheme(timestampBits, nodeBits, sequenceBits, epoch)
         }
 
-        When("Schemes are serialized and desiralized")
+        When("Schemes are serialized and deserialized")
         val desiralizedSchemes = schemes map { scheme =>
           val out = new ByteArrayOutputStream
           val oos = new ObjectOutputStream(out)
@@ -98,6 +98,11 @@ class SchemeSpec
           o.asInstanceOf[Scheme]
         }
 
+        Then("deserialized schemes should be equal to originals")
+        schemes.zip(desiralizedSchemes) foreach { t => 
+          val (scheme, deserializedScheme) = t
+          deserializedScheme should equal (scheme)
+        }
 
       }
     }
