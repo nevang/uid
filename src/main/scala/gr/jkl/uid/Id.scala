@@ -3,17 +3,17 @@ package gr.jkl.uid
 /** Wrapper for 64-bit Ids with underlying type of Long.
   *
   * An Id instance doesn't know about the way it is structured. This depends on  
-  * the Scheme of its Generator. So, the methods which extract parameters (e.g. 
-  * `timestamp`, `node` and `sequence`) from an Id require an implicit Scheme. 
-  * Consequently, those methods will return different results depending  on the 
-  * provided Scheme.
+  * the Scheme of its Generator. So, the methods whiches extract parameters  
+  * (e.g. `timestamp`, `node` and `sequence`) from an Id require an implicit  
+  * Scheme. Consequently, those methods will return different results depending   
+  * on the provided Scheme.
   * 
   * Generally, when an Id is constructed by a timestamp, a node and a sequence
   * a Scheme is required. On the other hand, an Id can be constructed by
   * a Long or a String without a Scheme.
   *
   * Ids are sorted the same way as Ids, as Longs and as Strings. The default 
-  * Ordering, implict in the companion object, sorts Ids first by their 
+  * Ordering, implicit in the companion object, sorts Ids first by their 
   * timestamp, then by their node and then by their sequence.
   *
   * @param underlying The Long behind this Id.
@@ -60,7 +60,7 @@ final class Id(val underlying: Long) {
 
 import scala.math.Ordering
 
-/** Factory, extractors and Orderings. */
+/** Factory methods, extractors and Orderings. */
 object Id {
 
   /** Creates an Id from a Long. */
@@ -71,8 +71,8 @@ object Id {
     Codec.decode(str).map(long => new Id(long ^ Long.MinValue))
 
   /** Extracts an Id from a Triple. */
-  def unapply(t: (Long, Long, Long))(implicit scheme: Scheme) = 
-    create(t._1, t._2, t._3)(scheme)
+  def unapply(triple: (Long, Long, Long))(implicit scheme: Scheme) = 
+    create(triple._1, triple._2, triple._3)(scheme)
 
    /** Creates an Id with the provided node, timestamp and sequence. */
   def create(timestamp: Long, node: Long, sequence: Long)(implicit scheme: Scheme): Option[Id] =
