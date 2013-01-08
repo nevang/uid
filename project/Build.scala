@@ -3,7 +3,7 @@ import sbt.Keys._
 
 object Settings {
   val buildOrganization = "gr.jkl"
-  val buildVersion      = "1.1"
+  val buildVersion      = "1.1.1-SNAPSHOT"
   val buildScalaVersion = Version.scala
 
   val buildSettings = Defaults.defaultSettings ++ Seq(
