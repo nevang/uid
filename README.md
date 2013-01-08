@@ -2,8 +2,8 @@ uid
 ===
 
 uid is a Scala library for the generation and handling of 64-bit unique ids. 
-See the [project page](//nevang.github.com/uid/) and 
-[scaladoc](//nevang.github.com/uid/lastest/api/index.html) for more details.
+See the [project page](http//nevang.github.com/uid/) and 
+[scaladoc](http//nevang.github.com/uid/lastest/api/index.html) for more details.
 
 Setup
 -----
