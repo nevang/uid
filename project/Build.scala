@@ -39,6 +39,19 @@ object Dependencies {
   val benchmark = Seq(caliper, eaio)
 }
 
+object Github {
+  val user    = "nevang"
+  val project = "uid"
+
+  import com.typesafe.sbt.SbtSite.site
+  import com.typesafe.sbt.SbtGhPages.ghpages
+  import com.typesafe.sbt.SbtGit.GitKeys.gitRemoteRepo
+
+  val siteSettings = site.settings ++ site.includeScaladoc() ++ 
+    site.pamfletSupport() ++ ghpages.settings ++ Seq(
+      gitRemoteRepo := "git@github.com:" + user + "/" + project + ".git")
+}
+
 object Publish {
   val nexus = "https://oss.sonatype.org/"
 
@@ -53,7 +66,7 @@ object Publish {
     startYear := Some(2012),
     organizationName := "jkl",
     organizationHomepage := None,
-    homepage := Some(url("https://github.com/nevang/uid")),
+    homepage := Some(url("http://" + Github.user + ".github.com/" + Github.project + "/")),
     licenses := Seq("Simplified BSD License" -> url("http://opensource.org/licenses/BSD-2-Clause")),
     publishMavenStyle := true,
     publishTo <<= version { (v: String) =>
@@ -68,9 +81,9 @@ object Publish {
     pomIncludeRepository := { _ => false },
     pomExtra := (
       <scm>
-        <connection>scm:git:git@github.com:nevang/uid.git</connection>
-        <developerConnection>scm:git:git@github.com:nevang/uid.git</developerConnection>
-        <url>git@github.com:nevang/uid.git</url>
+        <connection>scm:git:git@github.com:{Github.user}/{Github.project}.git</connection>
+        <developerConnection>scm:git:git@github.com:{Github.user}/{Github.project}.git</developerConnection>
+        <url>git@github.com:{Github.user}/{Github.project}.git</url>
       </scm>
       <developers>
         <developer>
@@ -86,11 +99,12 @@ object Publish {
 object UIDBuild extends Build {
   import Settings._
   import Publish._
+  import Github._
 
   lazy val uid = Project(
     id = "uid",
     base = file("."),
-    settings = defaultSettings ++ publishSettings ++ Seq(
+    settings = defaultSettings ++ publishSettings ++ siteSettings ++ Seq(
       description := "64-bit Ids for Scala",
       libraryDependencies ++= Dependencies.core,
       parallelExecution in Test := false,
