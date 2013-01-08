@@ -1,6 +1,14 @@
 CACHE MANIFEST
-# Tue Jan 08 12:26:08 EET 2013
-uid.html
+# Tue Jan 08 14:40:45 EET 2013
+index.html
+Motivation.html
+Setup.html
+User+Guide.html
+Example.html
+Id+Structure.html
+Id+Generation.html
+Backward+Moving+Clock.html
+Scaladoc.html
 Contents+in+Depth.html
 Combined+Pages.html
 img/fork.png
@@ -16,3 +24,4 @@ js/jquery.collapse.js
 js/pamflet.js
 css/prettify.css
 js/prettify/prettify.js
+js/prettify/lang-scala.js
