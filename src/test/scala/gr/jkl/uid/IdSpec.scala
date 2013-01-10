@@ -38,19 +38,19 @@ class IdSpec
       }
 
       scenario("IDs is created from short Strings") {
-        Given(s"$iterations IDs")
+        given(iterations + " IDs")
         val ids = List.fill(iterations)(Id.create(randomTimestamp, randomNode, randomSequence)).flatten
 
-        When("they converted to short Strings")
+        when("they converted to short Strings")
         val shortStringIds = ids.map { id => (id, id.toShortString)}
 
-        Then("each short String should be recognized as a valid Id")
+        then("each short String should be recognized as a valid Id")
         shortStringIds foreach { t =>
           val (id, str) = t
           str should be an ID
         }
 
-        And("each short String should be converted to the corresponding ID")
+        and("each short String should be converted to the corresponding ID")
         shortStringIds foreach { t =>
           val (id, str) = t
           Id.unapply(str).value should equal (id)
