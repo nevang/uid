@@ -32,7 +32,7 @@ private[uid] object Codec {
 
   /** Map of chars and their corresponding values. */
   private[this] val reverseIndex = 
-    TreeMap(chars.map(c => (c, chars.indexOf(c).toLong)) :_*) 
+    TreeMap(chars zip (0 until chars.length).map(_.toLong) :_*)
 
   /** Set of the Chars encoded bytes as Ints. */
   private[this] val byteSet = BitSet(chars.map(_.toInt) :_*)
@@ -41,7 +41,7 @@ private[uid] object Codec {
   private[this] val zeroChar = chars.head
 
   /** 64-bit unsigned zero as String. */
-  private[this] val zeroString = zeroChar * 11
+  private[this] val zeroString = zeroChar.toString * 11
 
   /** Returns a StringBuilder representing 0. */
   private[this] def zeroSB = new JStringBuilder(zeroString)
