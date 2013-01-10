@@ -11,7 +11,7 @@
         <link type="text/css" media="screen, projection" rel="stylesheet" href="css/pamflet.css"></link>
         <link type="text/css" media="print" rel="stylesheet" href="css/pamflet-print.css"></link>
         <link type="text/css" media="screen and (min-device-width: 800px), projection" rel="stylesheet" href="css/pamflet-grid.css"></link>
-        
+        <link type="text/css" media="screen, projection" rel="stylesheet" href="css/uid.css"></link>
         <script src="js/jquery-1.6.2.min.js"></script>
         <script src="js/jquery.collapse.js"></script>
         <script src="js/pamflet.js"></script>
@@ -26,7 +26,7 @@
         <a class="page prev nav" href="Motivation.html">
             <span class="space">&nbsp;</span>
             <span class="flip">❧</span>
-          </a><a class="page next nav" href="User+Guide.html">
+          </a><a class="page next nav" href="Documentation.html">
             <span class="space">&nbsp;</span>
             <span>❧</span>
           </a>
@@ -37,28 +37,37 @@
             </div>
           </div>
           <div class="span-16 prepend-1 append-1 contents">
-            <h2 id="Setup">Setup</h2><p>uid is available on the Sonatype and on the Maven Central repositories. 
-</p><h2 id="uid+1.1">uid 1.1</h2><p>uid 1.1 is built for Scala 2.10. The main difference from 1.0 is the use of 
-<a  href="http://docs.scala-lang.org/overviews/core/value-classes.html">Value Classes</a> for
-the ids.
+            <h1 id="Setup">Setup</h1><p>uid is published on the Sonatype and the Maven Central repositories. 
+</p><h2 id="Scala+2.10">Scala 2.10</h2><p>uid 1.1 is built for Scala 2.10. The difference from 1.0 is the use of 
+<a title="Scala Value Classes" href="http://docs.scala-lang.org/overviews/core/value-classes.html">Value Classes</a>. In order to use uid 1.1, include the following dependency in 
+your sbt build: 
 </p><pre><code class="prettyprint lang-scala">libraryDependencies += &quot;gr.jkl&quot; %% &quot;uid&quot; % &quot;1.1&quot;
-</code></pre><h2 id="uid+1.0">uid 1.0</h2><p>uid 1.0 is cross built for Scala 2.10.0, 2.9.3-RC1, 2.9.2, 2.9.1-1, 2.9.1, 
-2.9.0-1, 2.9.0, 2.8.2 and 2.8.1.
+</code></pre><h2 id="Scala+2.8.1%2B">Scala 2.8.1+</h2><p>uid 1.0 is cross built for the following Scala versions:
+</p><ul><li>2.8.1
+</li><li>2.8.2
+</li><li>2.9.0
+</li><li>2.9.0-1
+</li><li>2.9.1
+</li><li>2.9.1-1
+</li><li>2.9.2
+</li><li>2.10.0
+</li></ul><p>In order to use uid 1.0, include the following dependency in your sbt build:
 </p><pre><code class="prettyprint lang-scala">libraryDependencies += &quot;gr.jkl&quot; %% &quot;uid&quot; % &quot;1.0&quot;
-</code></pre><h2 id="Snaposhot+Releases">Snaposhot Releases</h2><p>To install the current snapshot release add the
-following resolver to your build.sbt file or to your 
-scala build file.
+</code></pre><h2 id="Snapshot+Releases">Snapshot Releases</h2><p>To install the current snapshot release add the Sonatype snapshot repository in
+your sbt build.
 </p><pre><code class="prettyprint lang-scala">resolvers += Opts.resolver.sonatypeSnapshots
+
+libraryDependencies += &quot;gr.jkl&quot; %% &quot;uid&quot; % &quot;1.1.1-SNAPSHOT&quot;
 </code></pre><div class="bottom nav">
                         <em>Next Page</em>
                         <span class="arrow">❧</span>
-                        <a href="User+Guide.html"> User Guide </a>
+                        <a href="Documentation.html"> Documentation </a>
                       </div><div class="tocwrapper show">
       <a class="tochead nav" style="display: none" href="#toc">❦</a>
       <a name="toc"></a>
       <h4 class="toctitle">Contents</h4>
       <div class="tocbody">
-      <div><a href="index.html">uid</a></div><ol class="toc"> <li><div><a href="Motivation.html">Motivation</a></div></li><li><div class="current">Setup</div></li><li><div><a href="User+Guide.html">User Guide</a></div><ol class="toc"> <li><div><a href="Example.html">Example</a></div></li><li><div><a href="Id+Structure.html">Id Structure</a></div></li><li><div><a href="Id+Generation.html">Id Generation</a></div></li><li><div><a href="Backward+Moving+Clock.html">Backward Moving Clock</a></div></li> </ol></li><li><div><a href="Scaladoc.html">Scaladoc</a></div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+      <div><a href="index.html">uid</a></div><ol class="toc"> <li><div><a href="Motivation.html">Motivation</a></div></li><li><div class="current">Setup</div></li><li><div><a href="Documentation.html">Documentation</a></div><ol class="toc"> <li><div><a href="Specifying+Id+Structure.html">Specifying Id Structure</a></div></li><li><div><a href="Deconstructing+Ids.html">Deconstructing Ids</a></div></li><li><div><a href="Representing+Ids+as+Strings.html">Representing Ids as Strings</a></div></li><li><div><a href="Sorting.html">Sorting</a></div></li><li><div><a href="Generating+Ids.html">Generating Ids</a></div></li><li><div><a href="Synchronizing+System+Clock.html">Synchronizing System Clock</a></div></li> </ol></li><li><div><a href="API.html">API</a></div></li><li><div><a href="Source+Code.html">Source Code</a></div></li><li><div><a href="License.html">License</a></div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
           </div>
         </div>
         <a class="fork nav" href="http://github.com/nevang/uid"><img alt="Fork me on GitHub" src="img/fork.png"></img></a>

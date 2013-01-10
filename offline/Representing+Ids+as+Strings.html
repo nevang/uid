@@ -1,0 +1,115 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html manifest="pamflet.manifest">
+      <head>
+        <title>uid — Representing Ids as Strings</title>
+        <link type="text/css" media="screen, projection" rel="stylesheet" href="css/blueprint/screen.css"></link>
+        <link type="text/css" media="screen and (min-device-width: 800px), projection" rel="stylesheet" href="css/blueprint/grid.css"></link>
+        <link type="text/css" media="print" rel="stylesheet" href="css/blueprint/print.css"></link> 
+        <!--[if lt IE 8]>
+          <link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection"/>
+        <![endif]-->
+        <link type="text/css" media="screen, projection" rel="stylesheet" href="css/pamflet.css"></link>
+        <link type="text/css" media="print" rel="stylesheet" href="css/pamflet-print.css"></link>
+        <link type="text/css" media="screen and (min-device-width: 800px), projection" rel="stylesheet" href="css/pamflet-grid.css"></link>
+        <link type="text/css" media="screen, projection" rel="stylesheet" href="css/uid.css"></link>
+        <script src="js/jquery-1.6.2.min.js"></script>
+        <script src="js/jquery.collapse.js"></script>
+        <script src="js/pamflet.js"></script>
+        <script type="text/javascript" src="js/prettify/prettify.js"></script><script type="text/javascript" src="js/prettify/lang-scala.js"></script><link type="text/css" rel="stylesheet" href="css/prettify.css"></link><script type="text/javascript"><!--
+        window.onload=function() { prettyPrint(); };
+      --></script>
+        <meta charset="utf-8"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+        
+      </head>
+      <body>
+        <a class="page prev nav" href="Deconstructing+Ids.html">
+            <span class="space">&nbsp;</span>
+            <span class="flip">❧</span>
+          </a><a class="page next nav" href="Sorting.html">
+            <span class="space">&nbsp;</span>
+            <span>❧</span>
+          </a>
+        <div class="container">
+          <div class="span-16 prepend-1 append-1">
+            <div class="top nav span-16 title">
+              <span>uid</span> — Representing Ids as Strings
+            </div>
+          </div>
+          <div class="span-16 prepend-1 append-1 contents">
+            <h2 id="Representing+Ids+as+Strings">Representing Ids as Strings</h2><p>Ids are represented as strings with a Base64 like URL-safe encoding. The
+encoding is based on the following index table. 
+</p><table>
+  <thead>
+    <tr>
+      <th>Value</th><th>Char</th><td rowspan="1">&nbsp;</td>
+      <th>Value</th><th>Char</th><td rowspan="1">&nbsp;</td>
+      <th>Value</th><th>Char</th><td rowspan="1">&nbsp;</td>
+      <th>Value</th><th>Char</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td><td>-</td><td rowspan="16">
+      <td>16</td><td>F</td><td rowspan="16">
+      <td>32</td><td>V</td><td rowspan="16">
+      <td>48</td><td>k</td>
+    </tr>
+    <tr><td>1</td><td>0</td><td>17</td><td>G</td><td>33</td><td>W</td><td>49</td><td>l</td></tr>
+    <tr><td>2</td><td>1</td><td>18</td><td>H</td><td>34</td><td>X</td><td>50</td><td>m</td></tr>
+    <tr><td>3</td><td>2</td><td>19</td><td>I</td><td>35</td><td>Y</td><td>51</td><td>n</td></tr>
+    <tr><td>4</td><td>3</td><td>20</td><td>J</td><td>36</td><td>Z</td><td>52</td><td>o</td></tr>
+    <tr><td>5</td><td>4</td><td>21</td><td>K</td><td>37</td><td>_</td><td>53</td><td>p</td></tr>
+    <tr><td>6</td><td>5</td><td>22</td><td>L</td><td>38</td><td>a</td><td>54</td><td>q</td></tr>
+    <tr><td>7</td><td>6</td><td>23</td><td>M</td><td>39</td><td>b</td><td>55</td><td>r</td></tr>
+    <tr><td>8</td><td>7</td><td>24</td><td>N</td><td>40</td><td>c</td><td>56</td><td>s</td></tr>
+    <tr><td>9</td><td>8</td><td>25</td><td>O</td><td>41</td><td>d</td><td>57</td><td>t</td></tr>
+    <tr><td>10</td><td>9</td><td>26</td><td>P</td><td>42</td><td>e</td><td>58</td><td>u</td></tr>
+    <tr><td>11</td><td>A</td><td>27</td><td>Q</td><td>43</td><td>f</td><td>59</td><td>v</td></tr>
+    <tr><td>12</td><td>B</td><td>28</td><td>R</td><td>44</td><td>g</td><td>60</td><td>w</td></tr>
+    <tr><td>13</td><td>C</td><td>29</td><td>S</td><td>45</td><td>h</td><td>61</td><td>x</td></tr>
+    <tr><td>14</td><td>D</td><td>30</td><td>T</td><td>46</td><td>i</td><td>62</td><td>y</td></tr>
+    <tr><td>15</td><td>E</td><td>31</td><td>U</td><td>47</td><td>j</td><td>63</td><td>z</td></tr>
+  </tbody>
+</table>
+<p>When ids are converted to Strings they are treated as unsigned values. Apart 
+from <em>toString</em>, you can use <em>toShortString</em> which creates shorter strings
+omitting zeros from the beginning. <a title="gr.jkl.uid.Id$" href="latest/api/gr/jkl/uid/Id$.html">Id's companion object</a> contains a string
+extractor which can be used for pattern matching.
+</p><pre><code class="prettyprint lang-scala">import gr.jkl.uid.Id
+
+val id = Id(-9217076510208286673L)
+
+val stringId = id.toString
+// stringId: String = --LMQy4R1-j
+
+val shortStringId = id.toShortString
+// shortStringId: String = LMQy4R1-j
+
+stringId match {
+  case Id(a) =&gt; println(s&quot;Valid id: $a&quot;)
+  case _      =&gt; println(&quot;Invalid id&quot;)
+}
+// Valid id: --LMQy4R1-j
+
+shortStringId match {
+  case Id(a) =&gt; println(s&quot;Valid id: $a&quot;)
+  case _      =&gt; println(&quot;Invalid id&quot;)
+}
+// Valid id: --LMQy4R1-j
+</code></pre><p><strong>Warning</strong>: Short string decoding is broken on versions 1.0 and 1.1.
+</p><div class="bottom nav">
+                        <em>Next Page</em>
+                        <span class="arrow">❧</span>
+                        <a href="Sorting.html"> Sorting </a>
+                      </div><div class="tocwrapper show">
+      <a class="tochead nav" style="display: none" href="#toc">❦</a>
+      <a name="toc"></a>
+      <h4 class="toctitle">Contents</h4>
+      <div class="tocbody">
+      <div><a href="index.html">uid</a></div><ol class="toc"> <li><div><a href="Motivation.html">Motivation</a></div></li><li><div><a href="Setup.html">Setup</a></div></li><li><div><a href="Documentation.html">Documentation</a></div><ol class="toc"> <li><div><a href="Specifying+Id+Structure.html">Specifying Id Structure</a></div></li><li><div><a href="Deconstructing+Ids.html">Deconstructing Ids</a></div></li><li><div class="current">Representing Ids as Strings</div></li><li><div><a href="Sorting.html">Sorting</a></div></li><li><div><a href="Generating+Ids.html">Generating Ids</a></div></li><li><div><a href="Synchronizing+System+Clock.html">Synchronizing System Clock</a></div></li> </ol></li><li><div><a href="API.html">API</a></div></li><li><div><a href="Source+Code.html">Source Code</a></div></li><li><div><a href="License.html">License</a></div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+          </div>
+        </div>
+        <a class="fork nav" href="http://github.com/nevang/uid"><img alt="Fork me on GitHub" src="img/fork.png"></img></a>
+      </body>
+    </html>

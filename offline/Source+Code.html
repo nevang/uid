@@ -1,7 +1,7 @@
 <!DOCTYPE html SYSTEM "about:legacy-compat">
 <html manifest="pamflet.manifest">
       <head>
-        <title>uid — Id Structure</title>
+        <title>uid — Source Code</title>
         <link type="text/css" media="screen, projection" rel="stylesheet" href="css/blueprint/screen.css"></link>
         <link type="text/css" media="screen and (min-device-width: 800px), projection" rel="stylesheet" href="css/blueprint/grid.css"></link>
         <link type="text/css" media="print" rel="stylesheet" href="css/blueprint/print.css"></link> 
@@ -11,7 +11,7 @@
         <link type="text/css" media="screen, projection" rel="stylesheet" href="css/pamflet.css"></link>
         <link type="text/css" media="print" rel="stylesheet" href="css/pamflet-print.css"></link>
         <link type="text/css" media="screen and (min-device-width: 800px), projection" rel="stylesheet" href="css/pamflet-grid.css"></link>
-        
+        <link type="text/css" media="screen, projection" rel="stylesheet" href="css/uid.css"></link>
         <script src="js/jquery-1.6.2.min.js"></script>
         <script src="js/jquery.collapse.js"></script>
         <script src="js/pamflet.js"></script>
@@ -21,39 +21,33 @@
         
       </head>
       <body>
-        <a class="page prev nav" href="Example.html">
+        <a class="page prev nav" href="API.html">
             <span class="space">&nbsp;</span>
             <span class="flip">❧</span>
-          </a><a class="page next nav" href="Id+Generation.html">
+          </a><a class="page next nav" href="License.html">
             <span class="space">&nbsp;</span>
             <span>❧</span>
           </a>
         <div class="container">
           <div class="span-16 prepend-1 append-1">
             <div class="top nav span-16 title">
-              <span>uid</span> — Id Structure
+              <span>uid</span> — Source Code
             </div>
           </div>
           <div class="span-16 prepend-1 append-1 contents">
-            <h2 id="Id+Structure">Id Structure</h2><p>Ids may be generated with the type of <a  href="latest/api/gr/jkl/uid/Id.html"><code>Id</code></a>, which 
-is a <a  href="http://docs.scala-lang.org/overviews/core/value-classes.html">Value Class</a>, 
-or as Longs. The value class contains some methods which extract the parameter of 
-the id. Each id is composed of:
-</p><ul><li>A timestamp with millisecond precision and a custom epoch.
-</li><li>A node id in order to produce unique ids on a multi-server environment.
-</li><li>A sequence number to avoid collisions on the same millisecond.
-</li></ul><p>The number of bits devodeted to each of the parameters and the epoch is defined
-by a <a  href="latest/api/gr/jkl/uid/Scheme.html"><code>Scheme</code></a>.
-</p><div class="bottom nav">
+            <h1 id="Source+Code">Source Code</h1><p>uid is hosted at <a title="uid Revision Control System" href="https://github.com/nevang/uid">https://github.com/nevang/uid</a>. Get the source code by 
+cloning the repository:
+</p><pre><code class="">git clone https://github.com/nevang/uid.git
+</code></pre><div class="bottom nav">
                         <em>Next Page</em>
                         <span class="arrow">❧</span>
-                        <a href="Id+Generation.html"> Id Generation </a>
+                        <a href="License.html"> License </a>
                       </div><div class="tocwrapper show">
       <a class="tochead nav" style="display: none" href="#toc">❦</a>
       <a name="toc"></a>
       <h4 class="toctitle">Contents</h4>
       <div class="tocbody">
-      <div><a href="index.html">uid</a></div><ol class="toc"> <li><div><a href="Motivation.html">Motivation</a></div></li><li><div><a href="Setup.html">Setup</a></div></li><li><div><a href="User+Guide.html">User Guide</a></div><ol class="toc"> <li><div><a href="Example.html">Example</a></div></li><li><div class="current">Id Structure</div></li><li><div><a href="Id+Generation.html">Id Generation</a></div></li><li><div><a href="Backward+Moving+Clock.html">Backward Moving Clock</a></div></li> </ol></li><li><div><a href="Scaladoc.html">Scaladoc</a></div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+      <div><a href="index.html">uid</a></div><ol class="toc"> <li><div><a href="Motivation.html">Motivation</a></div></li><li><div><a href="Setup.html">Setup</a></div></li><li><div><a href="Documentation.html">Documentation</a></div><ol class="toc"> <li><div><a href="Specifying+Id+Structure.html">Specifying Id Structure</a></div></li><li><div><a href="Deconstructing+Ids.html">Deconstructing Ids</a></div></li><li><div><a href="Representing+Ids+as+Strings.html">Representing Ids as Strings</a></div></li><li><div><a href="Sorting.html">Sorting</a></div></li><li><div><a href="Generating+Ids.html">Generating Ids</a></div></li><li><div><a href="Synchronizing+System+Clock.html">Synchronizing System Clock</a></div></li> </ol></li><li><div><a href="API.html">API</a></div></li><li><div class="current">Source Code</div></li><li><div><a href="License.html">License</a></div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
           </div>
         </div>
         <a class="fork nav" href="http://github.com/nevang/uid"><img alt="Fork me on GitHub" src="img/fork.png"></img></a>

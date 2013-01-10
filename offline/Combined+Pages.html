@@ -11,7 +11,7 @@
         <link type="text/css" media="screen, projection" rel="stylesheet" href="css/pamflet.css"></link>
         <link type="text/css" media="print" rel="stylesheet" href="css/pamflet-print.css"></link>
         <link type="text/css" media="screen and (min-device-width: 800px), projection" rel="stylesheet" href="css/pamflet-grid.css"></link>
-        
+        <link type="text/css" media="screen, projection" rel="stylesheet" href="css/uid.css"></link>
         <script src="js/jquery-1.6.2.min.js"></script>
         <script src="js/jquery.collapse.js"></script>
         <script src="js/pamflet.js"></script>
@@ -39,39 +39,63 @@
       <a name="toc"></a>
       <h4 class="toctitle">Contents</h4>
       <div class="tocbody">
-      <div><a href="#uid">uid</a></div><ol class="toc"> <li><div><a href="#Motivation">Motivation</a></div></li><li><div><a href="#Setup">Setup</a></div></li><li><div><a href="#User+Guide">User Guide</a></div><ol class="toc"> <li><div><a href="#Example">Example</a></div></li><li><div><a href="#Id+Structure">Id Structure</a></div></li><li><div><a href="#Id+Generation">Id Generation</a></div></li><li><div><a href="#Backward+Moving+Clock">Backward Moving Clock</a></div></li> </ol></li><li><div><a href="#Scaladoc">Scaladoc</a></div></li> </ol></div></div><h1 id="uid">uid</h1><p>uid is a Scala library for the generation and handling of 64-bit unique ids. 
-It is ispired by <a title="Twitter Snowflake" href="https://github.com/twitter/snowflake">Twitter Snowflake</a> 
-but it aims to be more flexible.
-</p><h1 id="Motivation">Motivation</h1><p>The motivation for developing this library is summarized below:
-</p><ul><li>Id packaging parameters shall be customized. 
-</li><li>Id generation shall be efficient on a multi-threaded environment.
-</li><li>Ids shall be sorted on multiple formats including their String representation.</li></ul><h2 id="Setup">Setup</h2><p>uid is available on the Sonatype and on the Maven Central repositories. 
-</p><h2 id="uid+1.1">uid 1.1</h2><p>uid 1.1 is built for Scala 2.10. The main difference from 1.0 is the use of 
-<a  href="http://docs.scala-lang.org/overviews/core/value-classes.html">Value Classes</a> for
-the ids.
+      <div><a href="#uid">uid</a></div><ol class="toc"> <li><div><a href="#Motivation">Motivation</a></div></li><li><div><a href="#Setup">Setup</a></div></li><li><div><a href="#Documentation">Documentation</a></div><ol class="toc"> <li><div><a href="#Specifying+Id+Structure">Specifying Id Structure</a></div></li><li><div><a href="#Deconstructing+Ids">Deconstructing Ids</a></div></li><li><div><a href="#Representing+Ids+as+Strings">Representing Ids as Strings</a></div></li><li><div><a href="#Sorting">Sorting</a></div></li><li><div><a href="#Generating+Ids">Generating Ids</a></div></li><li><div><a href="#Synchronizing+System+Clock">Synchronizing System Clock</a></div></li> </ol></li><li><div><a href="#API">API</a></div></li><li><div><a href="#Source+Code">Source Code</a></div></li><li><div><a href="#License">License</a></div></li> </ol></div></div><h1 id="uid">uid</h1><p>uid is a Scala library for the generation and handling of 64-bit unique ids. 
+It is inspired by <a title="Twitter Snowflake" href="https://github.com/twitter/snowflake">Twitter Snowflake</a> and it aims to be more flexible.
+</p><h1 id="Motivation">Motivation</h1><p>Modern web applications are polyglot and they are deployed on multiserver 
+environments. Ids are used on DBMS, including NoSQL systems, server-side
+applications and web browsers. 
+</p><p><a title="Universally unique identifier" href="http://en.wikipedia.org/wiki/Universally_unique_identifier">UUIDs</a> are safe and quick but they are not handy on databases and on 
+browsers. Also, UUIDs are usually not ordered. <a title="Announcing Snowflake" href="http://engineering.twitter.com/2010/06/announcing-snowflake.html">Twitter Snowflake</a> is an 
+excellent solution but it is designed to fulfill specific requirements and to 
+fit to Twitter’s architecture. For instance, it includes a Thrift Server, it is
+configured by Zookeper and its ids are consstructed according to a defined 
+format.
+</p><p>In consideration of the above premises, a 64-bit id solution seems convenient 
+for databases and server-side applications. Web browsers, on the contrary, as 
+JavaScript represents numbers according to the <a title="IEEE 754: Standard for Binary Floating-Point Arithmetic" href="http://grouper.ieee.org/groups/754/">IEEE 754 standard</a>, don’t 
+handle well 64-bit integers. For browsers, a decent string representation of the 
+ids could be a useful.
+</p><p>To conclude, the targets if this library are summarized below:
+</p><ul><li>Ids shall be 64-bit values.
+</li><li>Id packaging shall be customized. 
+</li><li>Ids shall be ordered. 
+</li><li>Id generation shall be safe on a multiserver environment. 
+</li><li>Id generation shall be efficient on multi-threaded applications. 
+</li><li>Ids shall be usable in multiple formats including strings. 
+</li></ul><h1 id="Setup">Setup</h1><p>uid is published on the Sonatype and the Maven Central repositories. 
+</p><h2 id="Scala+2.10">Scala 2.10</h2><p>uid 1.1 is built for Scala 2.10. The difference from 1.0 is the use of 
+<a title="Scala Value Classes" href="http://docs.scala-lang.org/overviews/core/value-classes.html">Value Classes</a>. In order to use uid 1.1, include the following dependency in 
+your sbt build: 
 </p><pre><code class="prettyprint lang-scala">libraryDependencies += &quot;gr.jkl&quot; %% &quot;uid&quot; % &quot;1.1&quot;
-</code></pre><h2 id="uid+1.0">uid 1.0</h2><p>uid 1.0 is cross built for Scala 2.10.0, 2.9.3-RC1, 2.9.2, 2.9.1-1, 2.9.1, 
-2.9.0-1, 2.9.0, 2.8.2 and 2.8.1.
+</code></pre><h2 id="Scala+2.8.1%2B">Scala 2.8.1+</h2><p>uid 1.0 is cross built for the following Scala versions:
+</p><ul><li>2.8.1
+</li><li>2.8.2
+</li><li>2.9.0
+</li><li>2.9.0-1
+</li><li>2.9.1
+</li><li>2.9.1-1
+</li><li>2.9.2
+</li><li>2.10.0
+</li></ul><p>In order to use uid 1.0, include the following dependency in your sbt build:
 </p><pre><code class="prettyprint lang-scala">libraryDependencies += &quot;gr.jkl&quot; %% &quot;uid&quot; % &quot;1.0&quot;
-</code></pre><h2 id="Snaposhot+Releases">Snaposhot Releases</h2><p>To install the current snapshot release add the
-following resolver to your build.sbt file or to your 
-scala build file.
+</code></pre><h2 id="Snapshot+Releases">Snapshot Releases</h2><p>To install the current snapshot release add the Sonatype snapshot repository in
+your sbt build.
 </p><pre><code class="prettyprint lang-scala">resolvers += Opts.resolver.sonatypeSnapshots
-</code></pre><h1 id="User+Guide">User Guide</h1><p>uid use is very simple. You define the structure of the ids via a 
-<a  href="latest/api/gr/jkl/uid/Scheme.html"><code>Scheme</code></a> and then you generate ids via a 
-<a  href="latest/api/gr/jkl/uid/Generator.html"><code>Generator</code></a>. You can choose to generate 
-ids as Longs or use the <a  href="latest/api/gr/jkl/uid/Id.html"><code>Id</code></a> type of the 
-library.
-</p><h2 id="Example">Example</h2><pre><code class="prettyprint lang-scala">import gr.jkl.uid._
 
-// Define the structure of the implementation's Ids with the following parameters:
+libraryDependencies += &quot;gr.jkl&quot; %% &quot;uid&quot; % &quot;1.1.1-SNAPSHOT&quot;
+</code></pre><h1 id="Documentation">Documentation</h1><p>uid use is very simple. You define the structure of the ids via a <a title="gr.jkl.uid.Scheme" href="latest/api/gr/jkl/uid/Scheme.html">Scheme</a> 
+and then you generate ids via a <a title="gr.jkl.uid.Generator" href="latest/api/gr/jkl/uid/Generator.html">Generator</a>. You can choose to generate ids 
+as Longs or use the <a title="gr.jkl.uid.Id" href="latest/api/gr/jkl/uid/Id.html">Id</a> type of the library.
+</p><pre><code class="prettyprint lang-scala">import gr.jkl.uid.{ Scheme, Generator }
+
+// Define the Id specification with the following parameters:
 // timestamp: 42 bits
-// node: 12 bits
-// sequence: 10 bits
-// epoch: 1351728000000L (01 Nov 2012 00:00:00 GMT)
+// node     : 12 bits
+// sequence : 10 bits
+// epoch    : 1351728000000L (01 Nov 2012 00:00:00 GMT)
 implicit val scheme = Scheme(42, 12, 10, 1351728000000L)
 
-// Construct an Id Generator for a machine with id O
+// Construct an Id Generator for a machine with id 0
 val generator = Generator(0L)
 
 // Create a new Id
@@ -79,33 +103,236 @@ val id = generator.newId
 
 // Create a new Id as a Long
 val longId = generator.newLong
-</code></pre><h2 id="Id+Structure">Id Structure</h2><p>Ids may be generated with the type of <a  href="latest/api/gr/jkl/uid/Id.html"><code>Id</code></a>, which 
-is a <a  href="http://docs.scala-lang.org/overviews/core/value-classes.html">Value Class</a>, 
-or as Longs. The value class contains some methods which extract the parameter of 
-the id. Each id is composed of:
+</code></pre><h2 id="Specifying+Id+Structure">Specifying Id Structure</h2><p>An id occupies 64-bits and is composed of:
 </p><ul><li>A timestamp with millisecond precision and a custom epoch.
-</li><li>A node id in order to produce unique ids on a multi-server environment.
+</li><li>A node id in order to produce unique ids on a different machines.
 </li><li>A sequence number to avoid collisions on the same millisecond.
-</li></ul><p>The number of bits devodeted to each of the parameters and the epoch is defined
-by a <a  href="latest/api/gr/jkl/uid/Scheme.html"><code>Scheme</code></a>.
-</p><h2 id="Id+Generation">Id Generation</h2><p>A thread-safe non-blocking <a  href="latest/api/gr/jkl/uid/Generator.html"><code>Generator</code></a> 
-is included in the library which relies on the System clock to generates ids. 
-The included generetor implements the following policies:
-</p><ul><li>If the <strong>number of ids generated on a random millisecond exceeds the limit</strong>, 
-which depends on the sequence bits, <strong>the next id will be produced with the 
-timestamp of the following millisecond</strong>. 
+</li></ul><p>The number of bits devoted to each of the parameters and the epoch is defined
+by a <a title="gr.jkl.uid.Scheme" href="latest/api/gr/jkl/uid/Scheme.html">Scheme</a>. Various parts of the library require a scheme and it is 
+convenient to define one implicitly.
+</p><pre><code class="prettyprint lang-scala">import gr.jkl.uid.Scheme
+
+val scheme = Scheme(
+  timestampBits = 44, 
+  nodeBits      = 12, 
+  sequenceBits  = 8,
+  epoch         = 1351728000000L)
+
+scheme.maxTimestamp 
+// res0: Long = 18943914044415
+
+scheme.maxNode 
+// res1: Long = 4095
+
+scheme.maxSequence 
+// res2: Long = 255
+</code></pre><h2 id="Deconstructing+Ids">Deconstructing Ids</h2><p><a title="gr.jkl.uid.Id" href="latest/api/gr/jkl/uid/Id.html">Id</a> is a <a title="Scala Value Classes" href="http://docs.scala-lang.org/overviews/core/value-classes.html">Value Class</a> with an underlying Long and it contains methods 
+which extract its parameters. Id’s <a title="gr.jkl.uid.Id$" href="latest/api/gr/jkl/uid/Id$.html">companion object</a> contains factory
+methods, extractors and <a title="scala.math.Ordering" href="http://www.scala-lang.org/api/current/scala/math/Ordering.html">Orderings</a>.
+</p><pre><code class="prettyprint lang-scala">import gr.jkl.uid.{ Id, Scheme }
+val id = Id(-9217076510208286673L)
+implicit val scheme = Scheme(44, 12, 8, 1351728000000L)
+
+id.timestamp
+// res0: Long = 1357731882071
+
+id.node
+// res1: Long = 32
+
+id.sequence
+// res2: Long = 47
+
+id.underlying
+// res3: Long = -9217076510208286673
+
+Id.create(1357731882071L, 32, 47)
+// res4: Option[gr.jkl.uid.Id] = Some(--LMQy4R1-j)
+</code></pre><p>Timestamp, node and sequence, among other methods, depend on the id’s underlying 
+Long and on the scheme. A different scheme would produce different results.
+</p><pre><code class="prettyprint lang-scala">import gr.jkl.uid.{ Id, Scheme }
+
+val id = Id(-9217076510208286673L)
+
+implicit val scheme = Scheme(43, 16, 5, 1357700000000L)
+
+id.timestamp
+// res0: Long = 1360701941035
+
+id.node
+// res1: Long = 33025
+
+id.sequence
+// res2: Long = 15
+</code></pre><h2 id="Representing+Ids+as+Strings">Representing Ids as Strings</h2><p>Ids are represented as strings with a Base64 like URL-safe encoding. The
+encoding is based on the following index table. 
+</p><table>
+  <thead>
+    <tr>
+      <th>Value</th><th>Char</th><td rowspan="1">&nbsp;</td>
+      <th>Value</th><th>Char</th><td rowspan="1">&nbsp;</td>
+      <th>Value</th><th>Char</th><td rowspan="1">&nbsp;</td>
+      <th>Value</th><th>Char</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td><td>-</td><td rowspan="16">
+      <td>16</td><td>F</td><td rowspan="16">
+      <td>32</td><td>V</td><td rowspan="16">
+      <td>48</td><td>k</td>
+    </tr>
+    <tr><td>1</td><td>0</td><td>17</td><td>G</td><td>33</td><td>W</td><td>49</td><td>l</td></tr>
+    <tr><td>2</td><td>1</td><td>18</td><td>H</td><td>34</td><td>X</td><td>50</td><td>m</td></tr>
+    <tr><td>3</td><td>2</td><td>19</td><td>I</td><td>35</td><td>Y</td><td>51</td><td>n</td></tr>
+    <tr><td>4</td><td>3</td><td>20</td><td>J</td><td>36</td><td>Z</td><td>52</td><td>o</td></tr>
+    <tr><td>5</td><td>4</td><td>21</td><td>K</td><td>37</td><td>_</td><td>53</td><td>p</td></tr>
+    <tr><td>6</td><td>5</td><td>22</td><td>L</td><td>38</td><td>a</td><td>54</td><td>q</td></tr>
+    <tr><td>7</td><td>6</td><td>23</td><td>M</td><td>39</td><td>b</td><td>55</td><td>r</td></tr>
+    <tr><td>8</td><td>7</td><td>24</td><td>N</td><td>40</td><td>c</td><td>56</td><td>s</td></tr>
+    <tr><td>9</td><td>8</td><td>25</td><td>O</td><td>41</td><td>d</td><td>57</td><td>t</td></tr>
+    <tr><td>10</td><td>9</td><td>26</td><td>P</td><td>42</td><td>e</td><td>58</td><td>u</td></tr>
+    <tr><td>11</td><td>A</td><td>27</td><td>Q</td><td>43</td><td>f</td><td>59</td><td>v</td></tr>
+    <tr><td>12</td><td>B</td><td>28</td><td>R</td><td>44</td><td>g</td><td>60</td><td>w</td></tr>
+    <tr><td>13</td><td>C</td><td>29</td><td>S</td><td>45</td><td>h</td><td>61</td><td>x</td></tr>
+    <tr><td>14</td><td>D</td><td>30</td><td>T</td><td>46</td><td>i</td><td>62</td><td>y</td></tr>
+    <tr><td>15</td><td>E</td><td>31</td><td>U</td><td>47</td><td>j</td><td>63</td><td>z</td></tr>
+  </tbody>
+</table>
+<p>When ids are converted to Strings they are treated as unsigned values. Apart 
+from <em>toString</em>, you can use <em>toShortString</em> which creates shorter strings
+omitting zeros from the beginning. <a title="gr.jkl.uid.Id$" href="latest/api/gr/jkl/uid/Id$.html">Id's companion object</a> contains a string
+extractor which can be used for pattern matching.
+</p><pre><code class="prettyprint lang-scala">import gr.jkl.uid.Id
+
+val id = Id(-9217076510208286673L)
+
+val stringId = id.toString
+// stringId: String = --LMQy4R1-j
+
+val shortStringId = id.toShortString
+// shortStringId: String = LMQy4R1-j
+
+stringId match {
+  case Id(a) =&gt; println(s&quot;Valid id: $a&quot;)
+  case _      =&gt; println(&quot;Invalid id&quot;)
+}
+// Valid id: --LMQy4R1-j
+
+shortStringId match {
+  case Id(a) =&gt; println(s&quot;Valid id: $a&quot;)
+  case _      =&gt; println(&quot;Invalid id&quot;)
+}
+// Valid id: --LMQy4R1-j
+</code></pre><p><strong>Warning</strong>: Short string decoding is broken on versions 1.0 and 1.1.
+</p><h2 id="Sorting">Sorting</h2><p>Ids are roughly sortable. Like <a title="Announcing Snowflake" href="http://engineering.twitter.com/2010/06/announcing-snowflake.html">Twitter Snowflake</a> they are <a title="Roughly Sorting: Sequential and Parallel Approach" href="http://ci.nii.ac.jp/naid/110002673489/">k-sorted</a>. 
+The default <a title="scala.math.Ordering" href="http://www.scala-lang.org/api/current/scala/math/Ordering.html">Ordering</a>, which is defined implicitly, sorts ids first by the 
+timestamp, then by the node and then by the sequence. Sorting ids as Strings or 
+Longs will produce the same result. 
+</p><pre><code class="prettyprint lang-scala">import gr.jkl.uid.Id
+
+val ids = List.fill(1000)(Id(util.Random.nextLong))
+
+val sortedIds = ids.sorted
+
+val longIds = ids.map(_.underlying)
+
+val sortedLongIds = longIds.sorted
+
+val stringIds = ids.map(_.toString)
+
+val sortedStringIds = stringIds.sorted
+
+sortedLongIds == sortedIds.map(_.underlying)
+// res0: Boolean = true
+
+sortedStringIds == sortedIds.map(_.toString)
+// res1: Boolean = true
+</code></pre><p>It’s easy to implement an ordering for a class which contains an id.
+</p><pre><code class="prettyprint lang-scala">import gr.jkl.uid.Id
+import scala.math.Ordering
+
+case class Comment(id: Id, commenter: String, body: String)
+
+object Comment {
+  implicit val IdOrdering: Ordering[Comment] = Ordering by (_.id)  
+}
+</code></pre><p>Alternatively, you can sort ids first by the timestamp, then by the sequence 
+and then by the node. This ordering requires a scheme.
+</p><pre><code class="prettyprint lang-scala">import gr.jkl.uid.{ Id, Scheme }
+
+val ids = List.fill(1000)(Id(util.Random.nextLong))
+
+implicit val scheme = Scheme(44, 12, 8, 1351728000000L)
+
+val sortedIds = ids.sorted(Id.TimeSequenceNodeOrdering)
+</code></pre><h2 id="Generating+Ids">Generating Ids</h2><p>A thread-safe non-blocking <a title="gr.jkl.uid.Generator" href="latest/api/gr/jkl/uid/Generator.html">Generator</a> is included in the library which 
+relies on the System clock to generates ids. You construct a generator having a 
+defined scheme and providing a node id. A generator produces unique <a title="gr.jkl.uid.Id" href="latest/api/gr/jkl/uid/Id.html">Ids</a> 
+or Longs.
+</p><pre><code class="prettyprint lang-scala">import gr.jkl.uid.{ Scheme, Generator }
+
+implicit val scheme = Scheme(44, 12, 8, 1351728000000L)
+
+val generator = Generator(714)
+
+generator.newId
+// res0: gr.jkl.uid.Id = --LRP8nVgc-
+
+generator.newLong
+// res1: Long = -9217054643603715584
+</code></pre><p>The generator produce ids according to the following policies:
+</p><ul><li>If the <strong>number of ids generated on a random millisecond exceeds scheme’s 
+limit, the next id will be produced with the timestamp of the following 
+millisecond</strong>. 
 </li><li>If the <strong>system clock goes back in time the generator will continue to produce 
-ids maintaining the timestamp of the last generated id</strong>. If sequence exceeds the
-generator will move to the next millisecond. 
-</li></ul><h2 id="Backward+Moving+Clock">Backward Moving Clock</h2><p>Although the <a  href="latest/api/gr/jkl/uid/Generator.html"><code>Generator</code></a> will continue 
-to produce unique ids when time goes back, it’s better to configure NTP in a 
-mode which doesn’t move the clock backwards. If your clock moves backwards it is
-suggested while instantiating an id generator to provide the last id generated
-for the related node.
-</p><pre><code class="prettyprint lang-scala">// Constructs an Id generator for node 0 which will generate 
-// Ids that come after the lastId
+ids maintaining the timestamp of the last generated id</strong>. If sequence exceeds 
+scheme’s limit generator will move to the next millisecond. 
+</li></ul><p>The above policies are implemented by the following logic:
+</p><ol><li>If current timestamp is greater than the timestamp of the last id, the new id
+will be constructed by the current timestamp and a sequence equal to 0.
+</li><li>If current timestamp is less than or equal to the timestamp of the last id
+and the sequence of the last id is less than the maximum scheme’s sequence, 
+the new id will be constructed by the previous timestamp and the previous 
+sequence incremented by 1.
+</li><li>If current timestamp is less than or equal to the timestamp of the last id 
+and the sequence of the last id is equal to the maximum scheme’s sequence, 
+the new id will be constructed by the previous timestamp incremented by 1 and 
+a sequence equal to 0.
+</li></ol><h2 id="Synchronizing+System+Clock">Synchronizing System Clock</h2><p>Id <a title="gr.jkl.uid.Generator" href="latest/api/gr/jkl/uid/Generator.html">Generator</a> depends strongly on the system’s clock. Although the generator 
+will continue to produce unique ids when clock goes back, it’s better to 
+synchronize your server’s time with NTP in a  <a title="Time Synchronization" href="http://wiki.dovecot.org/TimeMovedBackwards#Time_synchronization">mode which doesn't move the clock 
+backwards</a>.
+</p><p><strong>If your can’t control time synchronization and your clock may move 
+backwards it is suggested to instantiate your id generators providing the 
+last id generated for each node.</strong>
+</p><pre><code class="prettyprint lang-scala">// Constructs an Id generator for node 0 which will 
+// generate ids that come after the lastId
 val generator = Generator(0L, lastId)
-</code></pre><h1 id="Scaladoc">Scaladoc</h1><p><a  href="latest/api/index.html">Scaladoc for uid 1.1</a></p>
+</code></pre><h1 id="API">API</h1><p><strong>ScalaDoc</strong>: <a  href="latest/api/gr/jkl/uid/package.html">UID 1.1.1-SNAPSHOT</a>
+</p><h1 id="Source+Code">Source Code</h1><p>uid is hosted at <a title="uid Revision Control System" href="https://github.com/nevang/uid">https://github.com/nevang/uid</a>. Get the source code by 
+cloning the repository:
+</p><pre><code class="">git clone https://github.com/nevang/uid.git
+</code></pre><h1 id="License">License</h1><p>uid is released under the <a title="Simplified BSD license" href="http://opensource.org/licenses/BSD-2-Clause">Simplified BSD license</a>.
+</p><blockquote><p>Copyright (c) 2013, Nikolas Evangelopoulos
+All rights reserved.
+</p><p>Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met: 
+</p><ol><li>Redistributions of source code must retain the above copyright notice, this
+list of conditions and the following disclaimer. 
+</li><li>Redistributions in binary form must reproduce the above copyright notice,
+this list of conditions and the following disclaimer in the documentation
+and/or other materials provided with the distribution. 
+</li></ol><p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+</p></blockquote>
           </div>
         </div>
         <a class="fork nav" href="http://github.com/nevang/uid"><img alt="Fork me on GitHub" src="img/fork.png"></img></a>

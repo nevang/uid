@@ -1,7 +1,7 @@
 <!DOCTYPE html SYSTEM "about:legacy-compat">
-<html manifest="pamflet.manifest">
+<html>
       <head>
-        <title>uid — Id Generation</title>
+        <title>uid — API</title>
         <link type="text/css" media="screen, projection" rel="stylesheet" href="css/blueprint/screen.css"></link>
         <link type="text/css" media="screen and (min-device-width: 800px), projection" rel="stylesheet" href="css/blueprint/grid.css"></link>
         <link type="text/css" media="print" rel="stylesheet" href="css/blueprint/print.css"></link> 
@@ -11,7 +11,7 @@
         <link type="text/css" media="screen, projection" rel="stylesheet" href="css/pamflet.css"></link>
         <link type="text/css" media="print" rel="stylesheet" href="css/pamflet-print.css"></link>
         <link type="text/css" media="screen and (min-device-width: 800px), projection" rel="stylesheet" href="css/pamflet-grid.css"></link>
-        
+        <link type="text/css" media="screen, projection" rel="stylesheet" href="css/uid.css"></link>
         <script src="js/jquery-1.6.2.min.js"></script>
         <script src="js/jquery.collapse.js"></script>
         <script src="js/pamflet.js"></script>
@@ -21,39 +21,31 @@
         
       </head>
       <body>
-        <a class="page prev nav" href="Id+Structure.html">
+        <a class="page prev nav" href="Synchronizing+System+Clock.html">
             <span class="space">&nbsp;</span>
             <span class="flip">❧</span>
-          </a><a class="page next nav" href="Backward+Moving+Clock.html">
+          </a><a class="page next nav" href="Source+Code.html">
             <span class="space">&nbsp;</span>
             <span>❧</span>
           </a>
         <div class="container">
           <div class="span-16 prepend-1 append-1">
             <div class="top nav span-16 title">
-              <span>uid</span> — Id Generation
+              <span>uid</span> — API
             </div>
           </div>
           <div class="span-16 prepend-1 append-1 contents">
-            <h2 id="Id+Generation">Id Generation</h2><p>A thread-safe non-blocking <a  href="latest/api/gr/jkl/uid/Generator.html"><code>Generator</code></a> 
-is included in the library which relies on the System clock to generates ids. 
-The included generetor implements the following policies:
-</p><ul><li>If the <strong>number of ids generated on a random millisecond exceeds the limit</strong>, 
-which depends on the sequence bits, <strong>the next id will be produced with the 
-timestamp of the following millisecond</strong>. 
-</li><li>If the <strong>system clock goes back in time the generator will continue to produce 
-ids maintaining the timestamp of the last generated id</strong>. If sequence exceeds the
-generator will move to the next millisecond. 
-</li></ul><div class="bottom nav">
+            <h1 id="API">API</h1><p><strong>ScalaDoc</strong>: <a  href="latest/api/gr/jkl/uid/package.html">UID 1.1.1-SNAPSHOT</a>
+</p><div class="bottom nav">
                         <em>Next Page</em>
                         <span class="arrow">❧</span>
-                        <a href="Backward+Moving+Clock.html"> Backward Moving Clock </a>
+                        <a href="Source+Code.html"> Source Code </a>
                       </div><div class="tocwrapper show">
       <a class="tochead nav" style="display: none" href="#toc">❦</a>
       <a name="toc"></a>
       <h4 class="toctitle">Contents</h4>
       <div class="tocbody">
-      <div><a href="index.html">uid</a></div><ol class="toc"> <li><div><a href="Motivation.html">Motivation</a></div></li><li><div><a href="Setup.html">Setup</a></div></li><li><div><a href="User+Guide.html">User Guide</a></div><ol class="toc"> <li><div><a href="Example.html">Example</a></div></li><li><div><a href="Id+Structure.html">Id Structure</a></div></li><li><div class="current">Id Generation</div></li><li><div><a href="Backward+Moving+Clock.html">Backward Moving Clock</a></div></li> </ol></li><li><div><a href="Scaladoc.html">Scaladoc</a></div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+      <div><a href="index.html">uid</a></div><ol class="toc"> <li><div><a href="Motivation.html">Motivation</a></div></li><li><div><a href="Setup.html">Setup</a></div></li><li><div><a href="Documentation.html">Documentation</a></div><ol class="toc"> <li><div><a href="Specifying+Id+Structure.html">Specifying Id Structure</a></div></li><li><div><a href="Deconstructing+Ids.html">Deconstructing Ids</a></div></li><li><div><a href="Representing+Ids+as+Strings.html">Representing Ids as Strings</a></div></li><li><div><a href="Sorting.html">Sorting</a></div></li><li><div><a href="Generating+Ids.html">Generating Ids</a></div></li><li><div><a href="Synchronizing+System+Clock.html">Synchronizing System Clock</a></div></li> </ol></li><li><div class="current">API</div></li><li><div><a href="Source+Code.html">Source Code</a></div></li><li><div><a href="License.html">License</a></div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
           </div>
         </div>
         <a class="fork nav" href="http://github.com/nevang/uid"><img alt="Fork me on GitHub" src="img/fork.png"></img></a>

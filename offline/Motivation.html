@@ -11,7 +11,7 @@
         <link type="text/css" media="screen, projection" rel="stylesheet" href="css/pamflet.css"></link>
         <link type="text/css" media="print" rel="stylesheet" href="css/pamflet-print.css"></link>
         <link type="text/css" media="screen and (min-device-width: 800px), projection" rel="stylesheet" href="css/pamflet-grid.css"></link>
-        
+        <link type="text/css" media="screen, projection" rel="stylesheet" href="css/uid.css"></link>
         <script src="js/jquery-1.6.2.min.js"></script>
         <script src="js/jquery.collapse.js"></script>
         <script src="js/pamflet.js"></script>
@@ -35,10 +35,28 @@
             </div>
           </div>
           <div class="span-16 prepend-1 append-1 contents">
-            <h1 id="Motivation">Motivation</h1><p>The motivation for developing this library is summarized below:
-</p><ul><li>Id packaging parameters shall be customized. 
-</li><li>Id generation shall be efficient on a multi-threaded environment.
-</li><li>Ids shall be sorted on multiple formats including their String representation.</li></ul><div class="bottom nav">
+            <h1 id="Motivation">Motivation</h1><p>Modern web applications are polyglot and they are deployed on multiserver 
+environments. Ids are used on DBMS, including NoSQL systems, server-side
+applications and web browsers. 
+</p><p><a title="Universally unique identifier" href="http://en.wikipedia.org/wiki/Universally_unique_identifier">UUIDs</a> are safe and quick but they are not handy on databases and on 
+browsers. Also, UUIDs are usually not ordered. <a title="Announcing Snowflake" href="http://engineering.twitter.com/2010/06/announcing-snowflake.html">Twitter Snowflake</a> is an 
+excellent solution but it is designed to fulfill specific requirements and to 
+fit to Twitter’s architecture. For instance, it includes a Thrift Server, it is
+configured by Zookeper and its ids are consstructed according to a defined 
+format.
+</p><p>In consideration of the above premises, a 64-bit id solution seems convenient 
+for databases and server-side applications. Web browsers, on the contrary, as 
+JavaScript represents numbers according to the <a title="IEEE 754: Standard for Binary Floating-Point Arithmetic" href="http://grouper.ieee.org/groups/754/">IEEE 754 standard</a>, don’t 
+handle well 64-bit integers. For browsers, a decent string representation of the 
+ids could be a useful.
+</p><p>To conclude, the targets if this library are summarized below:
+</p><ul><li>Ids shall be 64-bit values.
+</li><li>Id packaging shall be customized. 
+</li><li>Ids shall be ordered. 
+</li><li>Id generation shall be safe on a multiserver environment. 
+</li><li>Id generation shall be efficient on multi-threaded applications. 
+</li><li>Ids shall be usable in multiple formats including strings. 
+</li></ul><div class="bottom nav">
                         <em>Next Page</em>
                         <span class="arrow">❧</span>
                         <a href="Setup.html"> Setup </a>
@@ -47,7 +65,7 @@
       <a name="toc"></a>
       <h4 class="toctitle">Contents</h4>
       <div class="tocbody">
-      <div><a href="index.html">uid</a></div><ol class="toc"> <li><div class="current">Motivation</div></li><li><div><a href="Setup.html">Setup</a></div></li><li><div><a href="User+Guide.html">User Guide</a></div><ol class="toc"> <li><div><a href="Example.html">Example</a></div></li><li><div><a href="Id+Structure.html">Id Structure</a></div></li><li><div><a href="Id+Generation.html">Id Generation</a></div></li><li><div><a href="Backward+Moving+Clock.html">Backward Moving Clock</a></div></li> </ol></li><li><div><a href="Scaladoc.html">Scaladoc</a></div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+      <div><a href="index.html">uid</a></div><ol class="toc"> <li><div class="current">Motivation</div></li><li><div><a href="Setup.html">Setup</a></div></li><li><div><a href="Documentation.html">Documentation</a></div><ol class="toc"> <li><div><a href="Specifying+Id+Structure.html">Specifying Id Structure</a></div></li><li><div><a href="Deconstructing+Ids.html">Deconstructing Ids</a></div></li><li><div><a href="Representing+Ids+as+Strings.html">Representing Ids as Strings</a></div></li><li><div><a href="Sorting.html">Sorting</a></div></li><li><div><a href="Generating+Ids.html">Generating Ids</a></div></li><li><div><a href="Synchronizing+System+Clock.html">Synchronizing System Clock</a></div></li> </ol></li><li><div><a href="API.html">API</a></div></li><li><div><a href="Source+Code.html">Source Code</a></div></li><li><div><a href="License.html">License</a></div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
           </div>
         </div>
         <a class="fork nav" href="http://github.com/nevang/uid"><img alt="Fork me on GitHub" src="img/fork.png"></img></a>

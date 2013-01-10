@@ -1,7 +1,7 @@
 <!DOCTYPE html SYSTEM "about:legacy-compat">
 <html>
       <head>
-        <title>uid — Backward Moving Clock</title>
+        <title>uid — Specifying Id Structure</title>
         <link type="text/css" media="screen, projection" rel="stylesheet" href="css/blueprint/screen.css"></link>
         <link type="text/css" media="screen and (min-device-width: 800px), projection" rel="stylesheet" href="css/blueprint/grid.css"></link>
         <link type="text/css" media="print" rel="stylesheet" href="css/blueprint/print.css"></link> 
@@ -11,7 +11,7 @@
         <link type="text/css" media="screen, projection" rel="stylesheet" href="css/pamflet.css"></link>
         <link type="text/css" media="print" rel="stylesheet" href="css/pamflet-print.css"></link>
         <link type="text/css" media="screen and (min-device-width: 800px), projection" rel="stylesheet" href="css/pamflet-grid.css"></link>
-        
+        <link type="text/css" media="screen, projection" rel="stylesheet" href="css/uid.css"></link>
         <script src="js/jquery-1.6.2.min.js"></script>
         <script src="js/jquery.collapse.js"></script>
         <script src="js/pamflet.js"></script>
@@ -23,38 +23,53 @@
         
       </head>
       <body>
-        <a class="page prev nav" href="Id+Generation.html">
+        <a class="page prev nav" href="Documentation.html">
             <span class="space">&nbsp;</span>
             <span class="flip">❧</span>
-          </a><a class="page next nav" href="Scaladoc.html">
+          </a><a class="page next nav" href="Deconstructing+Ids.html">
             <span class="space">&nbsp;</span>
             <span>❧</span>
           </a>
         <div class="container">
           <div class="span-16 prepend-1 append-1">
             <div class="top nav span-16 title">
-              <span>uid</span> — Backward Moving Clock
+              <span>uid</span> — Specifying Id Structure
             </div>
           </div>
           <div class="span-16 prepend-1 append-1 contents">
-            <h2 id="Backward+Moving+Clock">Backward Moving Clock</h2><p>Although the <a  href="latest/api/gr/jkl/uid/Generator.html"><code>Generator</code></a> will continue 
-to produce unique ids when time goes back, it’s better to configure NTP in a 
-mode which doesn’t move the clock backwards. If your clock moves backwards it is
-suggested while instantiating an id generator to provide the last id generated
-for the related node.
-</p><pre><code class="prettyprint lang-scala">// Constructs an Id generator for node 0 which will generate 
-// Ids that come after the lastId
-val generator = Generator(0L, lastId)
+            <h2 id="Specifying+Id+Structure">Specifying Id Structure</h2><p>An id occupies 64-bits and is composed of:
+</p><ul><li>A timestamp with millisecond precision and a custom epoch.
+</li><li>A node id in order to produce unique ids on a different machines.
+</li><li>A sequence number to avoid collisions on the same millisecond.
+</li></ul><p>The number of bits devoted to each of the parameters and the epoch is defined
+by a <a title="gr.jkl.uid.Scheme" href="latest/api/gr/jkl/uid/Scheme.html">Scheme</a>. Various parts of the library require a scheme and it is 
+convenient to define one implicitly.
+</p><pre><code class="prettyprint lang-scala">import gr.jkl.uid.Scheme
+
+val scheme = Scheme(
+  timestampBits = 44, 
+  nodeBits      = 12, 
+  sequenceBits  = 8,
+  epoch         = 1351728000000L)
+
+scheme.maxTimestamp 
+// res0: Long = 18943914044415
+
+scheme.maxNode 
+// res1: Long = 4095
+
+scheme.maxSequence 
+// res2: Long = 255
 </code></pre><div class="bottom nav">
                         <em>Next Page</em>
                         <span class="arrow">❧</span>
-                        <a href="Scaladoc.html"> Scaladoc </a>
+                        <a href="Deconstructing+Ids.html"> Deconstructing Ids </a>
                       </div><div class="tocwrapper show">
       <a class="tochead nav" style="display: none" href="#toc">❦</a>
       <a name="toc"></a>
       <h4 class="toctitle">Contents</h4>
       <div class="tocbody">
-      <div><a href="index.html">uid</a></div><ol class="toc"> <li><div><a href="Motivation.html">Motivation</a></div></li><li><div><a href="Setup.html">Setup</a></div></li><li><div><a href="User+Guide.html">User Guide</a></div><ol class="toc"> <li><div><a href="Example.html">Example</a></div></li><li><div><a href="Id+Structure.html">Id Structure</a></div></li><li><div><a href="Id+Generation.html">Id Generation</a></div></li><li><div class="current">Backward Moving Clock</div></li> </ol></li><li><div><a href="Scaladoc.html">Scaladoc</a></div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+      <div><a href="index.html">uid</a></div><ol class="toc"> <li><div><a href="Motivation.html">Motivation</a></div></li><li><div><a href="Setup.html">Setup</a></div></li><li><div><a href="Documentation.html">Documentation</a></div><ol class="toc"> <li><div class="current">Specifying Id Structure</div></li><li><div><a href="Deconstructing+Ids.html">Deconstructing Ids</a></div></li><li><div><a href="Representing+Ids+as+Strings.html">Representing Ids as Strings</a></div></li><li><div><a href="Sorting.html">Sorting</a></div></li><li><div><a href="Generating+Ids.html">Generating Ids</a></div></li><li><div><a href="Synchronizing+System+Clock.html">Synchronizing System Clock</a></div></li> </ol></li><li><div><a href="API.html">API</a></div></li><li><div><a href="Source+Code.html">Source Code</a></div></li><li><div><a href="License.html">License</a></div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
           </div>
         </div>
         <a class="fork nav" href="http://github.com/nevang/uid"><img alt="Fork me on GitHub" src="img/fork.png"></img></a>

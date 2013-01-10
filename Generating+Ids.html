@@ -1,0 +1,87 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html>
+      <head>
+        <title>uid — Generating Ids</title>
+        <link type="text/css" media="screen, projection" rel="stylesheet" href="css/blueprint/screen.css"></link>
+        <link type="text/css" media="screen and (min-device-width: 800px), projection" rel="stylesheet" href="css/blueprint/grid.css"></link>
+        <link type="text/css" media="print" rel="stylesheet" href="css/blueprint/print.css"></link> 
+        <!--[if lt IE 8]>
+          <link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection"/>
+        <![endif]-->
+        <link type="text/css" media="screen, projection" rel="stylesheet" href="css/pamflet.css"></link>
+        <link type="text/css" media="print" rel="stylesheet" href="css/pamflet-print.css"></link>
+        <link type="text/css" media="screen and (min-device-width: 800px), projection" rel="stylesheet" href="css/pamflet-grid.css"></link>
+        <link type="text/css" media="screen, projection" rel="stylesheet" href="css/uid.css"></link>
+        <script src="js/jquery-1.6.2.min.js"></script>
+        <script src="js/jquery.collapse.js"></script>
+        <script src="js/pamflet.js"></script>
+        <script type="text/javascript" src="js/prettify/prettify.js"></script><script type="text/javascript" src="js/prettify/lang-scala.js"></script><link type="text/css" rel="stylesheet" href="css/prettify.css"></link><script type="text/javascript"><!--
+        window.onload=function() { prettyPrint(); };
+      --></script>
+        <meta charset="utf-8"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+        
+      </head>
+      <body>
+        <a class="page prev nav" href="Sorting.html">
+            <span class="space">&nbsp;</span>
+            <span class="flip">❧</span>
+          </a><a class="page next nav" href="Synchronizing+System+Clock.html">
+            <span class="space">&nbsp;</span>
+            <span>❧</span>
+          </a>
+        <div class="container">
+          <div class="span-16 prepend-1 append-1">
+            <div class="top nav span-16 title">
+              <span>uid</span> — Generating Ids
+            </div>
+          </div>
+          <div class="span-16 prepend-1 append-1 contents">
+            <h2 id="Generating+Ids">Generating Ids</h2><p>A thread-safe non-blocking <a title="gr.jkl.uid.Generator" href="latest/api/gr/jkl/uid/Generator.html">Generator</a> is included in the library which 
+relies on the System clock to generates ids. You construct a generator having a 
+defined scheme and providing a node id. A generator produces unique <a title="gr.jkl.uid.Id" href="latest/api/gr/jkl/uid/Id.html">Ids</a> 
+or Longs.
+</p><pre><code class="prettyprint lang-scala">import gr.jkl.uid.{ Scheme, Generator }
+
+implicit val scheme = Scheme(44, 12, 8, 1351728000000L)
+
+val generator = Generator(714)
+
+generator.newId
+// res0: gr.jkl.uid.Id = --LRP8nVgc-
+
+generator.newLong
+// res1: Long = -9217054643603715584
+</code></pre><p>The generator produce ids according to the following policies:
+</p><ul><li>If the <strong>number of ids generated on a random millisecond exceeds scheme’s 
+limit, the next id will be produced with the timestamp of the following 
+millisecond</strong>. 
+</li><li>If the <strong>system clock goes back in time the generator will continue to produce 
+ids maintaining the timestamp of the last generated id</strong>. If sequence exceeds 
+scheme’s limit generator will move to the next millisecond. 
+</li></ul><p>The above policies are implemented by the following logic:
+</p><ol><li>If current timestamp is greater than the timestamp of the last id, the new id
+will be constructed by the current timestamp and a sequence equal to 0.
+</li><li>If current timestamp is less than or equal to the timestamp of the last id
+and the sequence of the last id is less than the maximum scheme’s sequence, 
+the new id will be constructed by the previous timestamp and the previous 
+sequence incremented by 1.
+</li><li>If current timestamp is less than or equal to the timestamp of the last id 
+and the sequence of the last id is equal to the maximum scheme’s sequence, 
+the new id will be constructed by the previous timestamp incremented by 1 and 
+a sequence equal to 0.
+</li></ol><div class="bottom nav">
+                        <em>Next Page</em>
+                        <span class="arrow">❧</span>
+                        <a href="Synchronizing+System+Clock.html"> Synchronizing System Clock </a>
+                      </div><div class="tocwrapper show">
+      <a class="tochead nav" style="display: none" href="#toc">❦</a>
+      <a name="toc"></a>
+      <h4 class="toctitle">Contents</h4>
+      <div class="tocbody">
+      <div><a href="index.html">uid</a></div><ol class="toc"> <li><div><a href="Motivation.html">Motivation</a></div></li><li><div><a href="Setup.html">Setup</a></div></li><li><div><a href="Documentation.html">Documentation</a></div><ol class="toc"> <li><div><a href="Specifying+Id+Structure.html">Specifying Id Structure</a></div></li><li><div><a href="Deconstructing+Ids.html">Deconstructing Ids</a></div></li><li><div><a href="Representing+Ids+as+Strings.html">Representing Ids as Strings</a></div></li><li><div><a href="Sorting.html">Sorting</a></div></li><li><div class="current">Generating Ids</div></li><li><div><a href="Synchronizing+System+Clock.html">Synchronizing System Clock</a></div></li> </ol></li><li><div><a href="API.html">API</a></div></li><li><div><a href="Source+Code.html">Source Code</a></div></li><li><div><a href="License.html">License</a></div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+          </div>
+        </div>
+        <a class="fork nav" href="http://github.com/nevang/uid"><img alt="Fork me on GitHub" src="img/fork.png"></img></a>
+      </body>
+    </html>
