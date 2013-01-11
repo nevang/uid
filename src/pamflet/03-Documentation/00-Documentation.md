@@ -25,6 +25,6 @@ val id = generator.newId
 val longId = generator.newLong
 ```
 
-[1]: latest/api/gr/jkl/uid/Scheme.html "gr.jkl.uid.Scheme"
-[2]: latest/api/gr/jkl/uid/Generator.html "gr.jkl.uid.Generator"
-[3]: latest/api/gr/jkl/uid/Id.html "gr.jkl.uid.Id"
+[1]: api/latest/gr/jkl/uid/Scheme.html "gr.jkl.uid.Scheme"
+[2]: api/latest/gr/jkl/uid/Generator.html "gr.jkl.uid.Generator"
+[3]: api/latest/gr/jkl/uid/Id.html "gr.jkl.uid.Id"

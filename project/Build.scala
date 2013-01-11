@@ -1,5 +1,6 @@
 import sbt._
 import sbt.Keys._
+import sbt.Project.Initialize
 
 object Settings {
   val buildOrganization = "gr.jkl"
@@ -43,13 +44,26 @@ object Github {
   val user    = "nevang"
   val project = "uid"
 
-  import com.typesafe.sbt.SbtSite.site
-  import com.typesafe.sbt.SbtGhPages.ghpages
-  import com.typesafe.sbt.SbtGit.GitKeys.gitRemoteRepo
+  import com.typesafe.sbt.SbtSite.{ site, SiteKeys }
+  import com.typesafe.sbt.SbtGhPages.{ GhPagesKeys, ghpages }
+  import GhPagesKeys._
+  import com.typesafe.sbt.SbtGit.GitKeys
 
-  val siteSettings = site.settings ++ site.includeScaladoc() ++ 
-    site.pamfletSupport() ++ ghpages.settings ++ Seq(
-      gitRemoteRepo := "git@github.com:" + user + "/" + project + ".git")
+  val siteSettings = site.settings ++ site.pamfletSupport() ++ ghpages.settings ++ Seq(
+      GitKeys.gitRemoteRepo := "git@github.com:" + user + "/" + project + ".git",
+      // override the synchLocal task to avoid removing the existing files (from specs2)
+      synchLocal <<= (privateMappings, updatedRepository, GitKeys.gitRunner, streams) map { (mappings, repo, git, s) =>
+        val betterMappings = mappings map { case (file, target) => (file, repo / target) }
+        IO.copy(betterMappings)
+        repo
+      },
+      // depending on the version, copy the api files to a different directory
+      SiteKeys.siteMappings <++= (mappings in packageDoc in Compile, version) map { (m, v) =>
+        val apiroot = 
+          if (v.trim.endsWith("SNAPSHOT")) "api/latest"
+          else "api/" + v
+        for((f, d) <- m) yield (f, apiroot + "/" + d)
+      })
 }
 
 object Publish {

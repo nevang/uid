@@ -46,7 +46,7 @@ id.sequence
 // res2: Long = 15
 ```
 
-[1]: latest/api/gr/jkl/uid/Id.html "gr.jkl.uid.Id"
+[1]: api/latest/gr/jkl/uid/Id.html "gr.jkl.uid.Id"
 [2]: http://docs.scala-lang.org/overviews/core/value-classes.html "Scala Value Classes"
-[3]: latest/api/gr/jkl/uid/Id\$.html "gr.jkl.uid.Id\$"
+[3]: api/latest/gr/jkl/uid/Id\$.html "gr.jkl.uid.Id\$"
 [4]: http://www.scala-lang.org/api/current/scala/math/Ordering.html "scala.math.Ordering"

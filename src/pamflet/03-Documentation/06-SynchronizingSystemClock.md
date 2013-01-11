@@ -16,5 +16,5 @@ last id generated for each node.**
 val generator = Generator(0L, lastId)
 ```
 
-[1]: latest/api/gr/jkl/uid/Generator.html "gr.jkl.uid.Generator"
+[1]: api/latest/gr/jkl/uid/Generator.html "gr.jkl.uid.Generator"
 [2]: http://wiki.dovecot.org/TimeMovedBackwards#Time_synchronization "Time Synchronization"

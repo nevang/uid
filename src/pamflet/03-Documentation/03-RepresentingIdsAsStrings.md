@@ -69,4 +69,4 @@ shortStringId match {
 
 **Warning**: Short string decoding is broken on versions 1.0 and 1.1.
 
-[1]: latest/api/gr/jkl/uid/Id\$.html "gr.jkl.uid.Id\$"
+[1]: api/latest/gr/jkl/uid/Id\$.html "gr.jkl.uid.Id\$"

@@ -41,7 +41,7 @@ your sbt build.
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "gr.jkl" %% "uid" % "$devVersion$-SNAPSHOT"
+libraryDependencies += "gr.jkl" %% "uid" % "$version$"
 ```
 
 [1]: http://docs.scala-lang.org/overviews/core/value-classes.html "Scala Value Classes"

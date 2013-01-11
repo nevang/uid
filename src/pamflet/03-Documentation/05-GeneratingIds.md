@@ -42,5 +42,5 @@ The above policies are implemented by the following logic:
    the new id will be constructed by the previous timestamp incremented by 1 and 
    a sequence equal to 0.
 
-[1]: latest/api/gr/jkl/uid/Generator.html "gr.jkl.uid.Generator"
-[2]: latest/api/gr/jkl/uid/Id.html "gr.jkl.uid.Id"
+[1]: api/latest/gr/jkl/uid/Generator.html "gr.jkl.uid.Generator"
+[2]: api/latest/gr/jkl/uid/Id.html "gr.jkl.uid.Id"

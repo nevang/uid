@@ -30,4 +30,4 @@ scheme.maxSequence
 // res2: Long = 255
 ```
 
-[1]: latest/api/gr/jkl/uid/Scheme.html    "gr.jkl.uid.Scheme"
+[1]: api/latest/gr/jkl/uid/Scheme.html    "gr.jkl.uid.Scheme"
