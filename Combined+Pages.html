@@ -83,9 +83,9 @@ your sbt build.
 </p><pre><code class="prettyprint lang-scala">resolvers += Opts.resolver.sonatypeSnapshots
 
 libraryDependencies += &quot;gr.jkl&quot; %% &quot;uid&quot; % &quot;1.1.1-SNAPSHOT&quot;
-</code></pre><h1 id="Documentation">Documentation</h1><p>uid use is very simple. You define the structure of the ids via a <a title="gr.jkl.uid.Scheme" href="latest/api/gr/jkl/uid/Scheme.html">Scheme</a> 
-and then you generate ids via a <a title="gr.jkl.uid.Generator" href="latest/api/gr/jkl/uid/Generator.html">Generator</a>. You can choose to generate ids 
-as Longs or use the <a title="gr.jkl.uid.Id" href="latest/api/gr/jkl/uid/Id.html">Id</a> type of the library.
+</code></pre><h1 id="Documentation">Documentation</h1><p>uid use is very simple. You define the structure of the ids via a <a title="gr.jkl.uid.Scheme" href="api/latest/gr/jkl/uid/Scheme.html">Scheme</a> 
+and then you generate ids via a <a title="gr.jkl.uid.Generator" href="api/latest/gr/jkl/uid/Generator.html">Generator</a>. You can choose to generate ids 
+as Longs or use the <a title="gr.jkl.uid.Id" href="api/latest/gr/jkl/uid/Id.html">Id</a> type of the library.
 </p><pre><code class="prettyprint lang-scala">import gr.jkl.uid.{ Scheme, Generator }
 
 // Define the Id specification with the following parameters:
@@ -108,7 +108,7 @@ val longId = generator.newLong
 </li><li>A node id in order to produce unique ids on a different machines.
 </li><li>A sequence number to avoid collisions on the same millisecond.
 </li></ul><p>The number of bits devoted to each of the parameters and the epoch is defined
-by a <a title="gr.jkl.uid.Scheme" href="latest/api/gr/jkl/uid/Scheme.html">Scheme</a>. Various parts of the library require a scheme and it is 
+by a <a title="gr.jkl.uid.Scheme" href="api/latest/gr/jkl/uid/Scheme.html">Scheme</a>. Various parts of the library require a scheme and it is 
 convenient to define one implicitly.
 </p><pre><code class="prettyprint lang-scala">import gr.jkl.uid.Scheme
 
@@ -126,8 +126,8 @@ scheme.maxNode
 
 scheme.maxSequence 
 // res2: Long = 255
-</code></pre><h2 id="Deconstructing+Ids">Deconstructing Ids</h2><p><a title="gr.jkl.uid.Id" href="latest/api/gr/jkl/uid/Id.html">Id</a> is a <a title="Scala Value Classes" href="http://docs.scala-lang.org/overviews/core/value-classes.html">Value Class</a> with an underlying Long and it contains methods 
-which extract its parameters. Id’s <a title="gr.jkl.uid.Id$" href="latest/api/gr/jkl/uid/Id$.html">companion object</a> contains factory
+</code></pre><h2 id="Deconstructing+Ids">Deconstructing Ids</h2><p><a title="gr.jkl.uid.Id" href="api/latest/gr/jkl/uid/Id.html">Id</a> is a <a title="Scala Value Classes" href="http://docs.scala-lang.org/overviews/core/value-classes.html">Value Class</a> with an underlying Long and it contains methods 
+which extract its parameters. Id’s <a title="gr.jkl.uid.Id$" href="api/latest/gr/jkl/uid/Id$.html">companion object</a> contains factory
 methods, extractors and <a title="scala.math.Ordering" href="http://www.scala-lang.org/api/current/scala/math/Ordering.html">Orderings</a>.
 </p><pre><code class="prettyprint lang-scala">import gr.jkl.uid.{ Id, Scheme }
 val id = Id(-9217076510208286673L)
@@ -200,7 +200,7 @@ encoding is based on the following index table.
 </table>
 <p>When ids are converted to Strings they are treated as unsigned values. Apart 
 from <em>toString</em>, you can use <em>toShortString</em> which creates shorter strings
-omitting zeros from the beginning. <a title="gr.jkl.uid.Id$" href="latest/api/gr/jkl/uid/Id$.html">Id's companion object</a> contains a string
+omitting zeros from the beginning. <a title="gr.jkl.uid.Id$" href="api/latest/gr/jkl/uid/Id$.html">Id's companion object</a> contains a string
 extractor which can be used for pattern matching.
 </p><pre><code class="prettyprint lang-scala">import gr.jkl.uid.Id
 
@@ -265,9 +265,9 @@ val ids = List.fill(1000)(Id(util.Random.nextLong))
 implicit val scheme = Scheme(44, 12, 8, 1351728000000L)
 
 val sortedIds = ids.sorted(Id.TimeSequenceNodeOrdering)
-</code></pre><h2 id="Generating+Ids">Generating Ids</h2><p>A thread-safe non-blocking <a title="gr.jkl.uid.Generator" href="latest/api/gr/jkl/uid/Generator.html">Generator</a> is included in the library which 
+</code></pre><h2 id="Generating+Ids">Generating Ids</h2><p>A thread-safe non-blocking <a title="gr.jkl.uid.Generator" href="api/latest/gr/jkl/uid/Generator.html">Generator</a> is included in the library which 
 relies on the System clock to generates ids. You construct a generator having a 
-defined scheme and providing a node id. A generator produces unique <a title="gr.jkl.uid.Id" href="latest/api/gr/jkl/uid/Id.html">Ids</a> 
+defined scheme and providing a node id. A generator produces unique <a title="gr.jkl.uid.Id" href="api/latest/gr/jkl/uid/Id.html">Ids</a> 
 or Longs.
 </p><pre><code class="prettyprint lang-scala">import gr.jkl.uid.{ Scheme, Generator }
 
@@ -298,7 +298,7 @@ sequence incremented by 1.
 and the sequence of the last id is equal to the maximum scheme’s sequence, 
 the new id will be constructed by the previous timestamp incremented by 1 and 
 a sequence equal to 0.
-</li></ol><h2 id="Synchronizing+System+Clock">Synchronizing System Clock</h2><p>Id <a title="gr.jkl.uid.Generator" href="latest/api/gr/jkl/uid/Generator.html">Generator</a> depends strongly on the system’s clock. Although the generator 
+</li></ol><h2 id="Synchronizing+System+Clock">Synchronizing System Clock</h2><p>Id <a title="gr.jkl.uid.Generator" href="api/latest/gr/jkl/uid/Generator.html">Generator</a> depends strongly on the system’s clock. Although the generator 
 will continue to produce unique ids when clock goes back, it’s better to 
 synchronize your server’s time with NTP in a  <a title="Time Synchronization" href="http://wiki.dovecot.org/TimeMovedBackwards#Time_synchronization">mode which doesn't move the clock 
 backwards</a>.
@@ -308,8 +308,10 @@ last id generated for each node.</strong>
 </p><pre><code class="prettyprint lang-scala">// Constructs an Id generator for node 0 which will 
 // generate ids that come after the lastId
 val generator = Generator(0L, lastId)
-</code></pre><h1 id="API">API</h1><p><strong>ScalaDoc</strong>: <a  href="latest/api/gr/jkl/uid/package.html">UID 1.1.1-SNAPSHOT</a>
-</p><h1 id="Source+Code">Source Code</h1><p>uid is hosted at <a title="uid Revision Control System" href="https://github.com/nevang/uid">https://github.com/nevang/uid</a>. Get the source code by 
+</code></pre><h1 id="API">API</h1><ul><li><a  href="api/latest/gr/jkl/uid/package.html">ScalaDoc for uid 1.1.1-SNAPSHOT</a> (snapshot release)
+</li><li><a  href="api/1.1/gr/jkl/uid/package.html">ScalaDoc for uid 1.1</a> (for Scala 2.10)
+</li><li><a  href="api/1.0/gr/jkl/uid/package.html">ScalaDoc for uid 1.0</a> (for Scala 2.10, 2.9.0+, 2.8.1+)
+</li></ul><h1 id="Source+Code">Source Code</h1><p>uid is hosted at <a title="uid Revision Control System" href="https://github.com/nevang/uid">https://github.com/nevang/uid</a>. Get the source code by 
 cloning the repository:
 </p><pre><code class="">git clone https://github.com/nevang/uid.git
 </code></pre><h1 id="License">License</h1><p>uid is released under the <a title="Simplified BSD license" href="http://opensource.org/licenses/BSD-2-Clause">Simplified BSD license</a>.
