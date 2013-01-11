@@ -149,7 +149,7 @@ extends Generator {
     new AtomicLong((internalTimestampPack(lastTimestamp) | lastSequence))
 
   //** Generates a Long for new Id. */
-  private[this] final def generateLong = {
+  private[this] def generateLong = {
     val currentTimestamp = currentTimeMillis
     if (currentTimestamp < scheme.epoch | currentTimestamp > scheme.maxTimestamp) {
       throw GeneratorException("Time out of scheme's limits.") 
@@ -164,7 +164,7 @@ extends Generator {
 
   /** Calculates the next encoded Long and updates the atomic variable. */
   @tailrec
-  private[this] final def getNextInternalLong(internalPackedTimestamp: Long): Long = {
+  private[this] def getNextInternalLong(internalPackedTimestamp: Long): Long = {
     val tempLong = internalLastLong.incrementAndGet
     if (tempLong >= internalPackedTimestamp) tempLong // time hasn't proceeded
     else if (internalLastLong.compareAndSet(tempLong, internalPackedTimestamp)) // time proceeded
