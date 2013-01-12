@@ -1,129 +1,73 @@
 import sbt._
 import sbt.Keys._
-import sbt.Project.Initialize
+import ls.Plugin.{ lsSettings, LsKeys }
 
 object Settings {
-  val buildOrganization = "gr.jkl"
-  val buildVersion      = "1.1.1-SNAPSHOT"
-  val buildScalaVersion = Version.scala
+  lazy val buildOrganization = "gr.jkl"
+  lazy val buildScalaVersion = Version.scala
 
-  val buildSettings = Defaults.defaultSettings ++ Seq(
+  def buildSettings = Defaults.defaultSettings ++ Seq(
     organization := buildOrganization,
-    version      := buildVersion,
     scalaVersion := buildScalaVersion,
     crossVersion := CrossVersion.binary)
 
-  val defaultSettings = buildSettings ++ Seq(
+  def defaultSettings = buildSettings ++ Seq(
     resolvers ++= DefaultOptions.resolvers(true),
     scalacOptions in Compile ++= Seq("-encoding", "UTF-8", "-target:jvm-1.6", "-deprecation", "-feature", "-unchecked"),
-    shellPrompt := DefaultOptions.shellPrompt(buildVersion))
+    parallelExecution in Test := false,
+    testOptions in Test += Tests.Argument("-oDF"),
+    scalacOptions in (Compile, doc) ++= Seq("-groups"),
+    shellPrompt <<= version(v => DefaultOptions.shellPrompt(v)))
 }
 
 object Version {
-  val scala     = "2.10.0"
-  val scalaTest = "2.0.M5b"
-  val caliper   = "0.5-rc1"
-  val eaio      = "3.2"
+  lazy val scala     = "2.10.0"
+  lazy val scalaTest = "2.0.M5b"
+  lazy val caliper   = "0.5-rc1"
+  lazy val eaio      = "3.2"
 }
 
 object Dependency {
-  val scalaTest = "org.scalatest"      %% "scalatest" % Version.scalaTest % "test"
-  val caliper   = "com.google.caliper" %  "caliper"   % Version.caliper
-  val eaio      = "com.eaio.uuid"      %  "uuid"      % Version.eaio
+  lazy val scalaTest = "org.scalatest"      %% "scalatest" % Version.scalaTest % "test"
+  lazy val caliper   = "com.google.caliper" %  "caliper"   % Version.caliper
+  lazy val eaio      = "com.eaio.uuid"      %  "uuid"      % Version.eaio
 }
 
 object Dependencies {
   import Dependency._
 
-  val core = Seq(scalaTest)
+  lazy val core = Seq(scalaTest)
 
-  val benchmark = Seq(caliper, eaio)
-}
-
-object Github {
-  val user    = "nevang"
-  val project = "uid"
-
-  import com.typesafe.sbt.SbtSite.{ site, SiteKeys }
-  import com.typesafe.sbt.SbtGhPages.{ GhPagesKeys, ghpages }
-  import GhPagesKeys._
-  import com.typesafe.sbt.SbtGit.GitKeys
-
-  val siteSettings = site.settings ++ site.pamfletSupport() ++ ghpages.settings ++ Seq(
-      GitKeys.gitRemoteRepo := "git@github.com:" + user + "/" + project + ".git",
-      // override the synchLocal task to avoid removing the existing files (from specs2)
-      synchLocal <<= (privateMappings, updatedRepository, GitKeys.gitRunner, streams) map { (mappings, repo, git, s) =>
-        val betterMappings = mappings map { case (file, target) => (file, repo / target) }
-        IO.copy(betterMappings)
-        repo
-      },
-      // depending on the version, copy the api files to a different directory
-      SiteKeys.siteMappings <++= (mappings in packageDoc in Compile, version) map { (m, v) =>
-        val apiroot = 
-          if (v.trim.endsWith("SNAPSHOT")) "api/latest"
-          else "api/" + v
-        for((f, d) <- m) yield (f, apiroot + "/" + d)
-      })
-}
-
-object Publish {
-  val nexus = "https://oss.sonatype.org/"
-
-  val root = file(".")
-
-  def mapToBase(base: String, filenames: String*): Seq[(File,String)] = {
-    val path = base + (if (base.isEmpty || base.endsWith("/")) "" else "/")
-    filenames.map( filename => (root / filename) -> ( path + filename))
-  }
-
-  val publishSettings = Seq(
-    startYear := Some(2012),
-    organizationName := "jkl",
-    organizationHomepage := None,
-    homepage := Some(url("http://" + Github.user + ".github.com/" + Github.project + "/")),
-    licenses := Seq("Simplified BSD License" -> url("http://opensource.org/licenses/BSD-2-Clause")),
-    publishMavenStyle := true,
-    publishTo <<= version { (v: String) =>
-      if (v.trim.endsWith("SNAPSHOT"))
-        Some("snapshots" at nexus + "content/repositories/snapshots")
-      else
-        Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-    },
-    mappings in (Compile, packageBin) ++= mapToBase("META-INF", "LICENSE", "NOTICE"),
-    mappings in (Compile, packageSrc) ++= mapToBase("META-INF", "LICENSE", "NOTICE"),
-    publishArtifact in Test := false,
-    pomIncludeRepository := { _ => false },
-    pomExtra := (
-      <scm>
-        <connection>scm:git:git@github.com:{Github.user}/{Github.project}.git</connection>
-        <developerConnection>scm:git:git@github.com:{Github.user}/{Github.project}.git</developerConnection>
-        <url>git@github.com:{Github.user}/{Github.project}.git</url>
-      </scm>
-      <developers>
-        <developer>
-          <id>nevang</id>
-          <name>Nikolas Evangelopoulos</name>
-          <url>http://github.com/nevang</url>
-        </developer>
-      </developers>
-    )
-  )
+  lazy val benchmark = Seq(caliper, eaio)
 }
 
 object UIDBuild extends Build {
   import Settings._
-  import Publish._
-  import Github._
+
+  lazy val developers = Seq(Developer("nevang", "Nikolas Evangelopoulos", Some("https://github.com/nevang")))
+
+  def extraSettings = GitHub.settings ++ Site.settings ++ Publish.settings ++ Release.settings ++ lsSettings ++ Seq( 
+    startYear := Some(2012),
+    organizationName := "jkl",
+    organizationHomepage := None,
+    licenses <<= homepage ( _.map( h => "Simplified BSD License" -> url(h + "License.html")).toSeq),
+    Publish.developers :=developers)
+
+  lazy val sonatype = "https://oss.sonatype.org/content/repositories/"
 
   lazy val uid = Project(
     id = "uid",
     base = file("."),
-    settings = defaultSettings ++ publishSettings ++ siteSettings ++ Seq(
-      description := "64-bit Ids for Scala",
+    settings = defaultSettings ++ extraSettings ++ Seq(
+      description := "Library for 64-bit unique Id generation and handling",
+      LsKeys.tags in LsKeys.lsync := Seq("id", "uid", "64-bit"),
+      LsKeys.docsUrl in LsKeys.lsync <<= homepage(_.map(h => url(h + "Documentation.html"))),
+      externalResolvers in LsKeys.lsync <<= isSnapshot map { s =>
+        if (s) Seq("sonatype-snapshots" at sonatype + "snapshots")
+        else Seq("sonatype-releases"  at sonatype + "releases")
+      },
       libraryDependencies ++= Dependencies.core,
-      parallelExecution in Test := false,
-      testOptions in Test += Tests.Argument("-oDF"),
-      scalacOptions in (Compile, doc) ++= DefaultOptions.scaladoc("UID", buildVersion) ++ Seq("-groups")))
+      scalacOptions in (Compile, doc) <++= version map (v => DefaultOptions.scaladoc("UID", v))))
 
   lazy val benchmark = Project(
     id = "benchmark",
