@@ -16,7 +16,7 @@ $(document).ready(function(){
 
   $.get('releases.xml', function(data) {
     $(data).find('release').each(function(){
-      var release, v, so, sv, h, a
+      var r, v, so, sv, h, a
       r = $(this)
       v = r.find('version').text()
       so = $.makeArray(r.find('value'))
