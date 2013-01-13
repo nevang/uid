@@ -37,46 +37,10 @@
           <div class="span-16 prepend-1 append-1 contents">
             <h1 id="Setup">Setup</h1><p>uid is published on the Sonatype and the Maven Central repositories. uid 1.1 is 
 built for Scala 2.10. The difference from 1.0 is the use of <a title="Scala Value Classes" href="http://docs.scala-lang.org/overviews/core/value-classes.html">Value Classes</a>. 
-</p><p><div id="stables"></div>
+</p><div id="stables"></div>
 <div id="snapshots"></div>
-<script>
-  jQuery(document).ready(function(){
-    var isStable, depedency, sbtCode, resolver = ‘resolvers += Opts.resolver.sonatypeSnapshots’
-</p><pre><code>isStable = function(v) {
-  return /^[\d\.\-]+$/i.test(v)
-}
-
-depedency = function(v) {
-  return 'libraryDependencies += &quot;gr.jkl&quot; %% &quot;uid&quot; % &quot;' + v + '&quot;'
-}
-
-sbtCode = function(v) {
-  return '&lt;pre&gt;&lt;code class=&quot;prettyprint lang-scala&quot;&gt;' + 
-    (isStable(v) ? '' : resolver + '\n\n') + depedency(v) + '&lt;/code&gt;&lt;/pre&gt;'
-}
-
-jQuery.get('releases.xml', function(data) {
-  jQuery(data).find('release').each(function(){
-    var release, v, so, sv, h, a
-    r = jQuery(this)
-    v = r.find('version').text()
-    so = jQuery.makeArray(r.find('value'))
-    sp = jQuery.map(so, function(o){
-      return '&lt;em&gt;' + jQuery(o).text() + '&lt;/em&gt;'
-    })
-    h = jQuery('&lt;div /&gt;')
-    h.append('&lt;h2&gt;uid ' + v + '&lt;/h2&gt;')
-    h.append('&lt;p&gt;uid ' + v + ' is built for Scala ' + sp.join(', ') + 
-      '. In order to use uid ' + v + ', include the following in your sbt build:&lt;/p&gt;')
-    h.append(sbtCode(v))
-    a = isStable ? '#stables' : '#snapshots'
-    h.appendTo(jQuery('.contents'))
-  })
-}, 'xml')
-prettyPrint()
-</code></pre><p>  })
-&lt;/script&gt;
-</p><div class="bottom nav">
+<script src="js/releases.js"></script>
+<div class="bottom nav">
                         <em>Next Page</em>
                         <span class="arrow">❧</span>
                         <a href="Documentation.html"> Documentation </a>
