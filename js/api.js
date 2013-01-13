@@ -6,7 +6,7 @@ $(document).ready(function(){
   }
 
   apiLink = function(v) {
-    return 'api/' + (isStable(v) ? v : latest) + '/gr/jkl/uid/package.html'
+    return 'api/' + (isStable(v) ? v : 'latest') + '/gr/jkl/uid/package.html'
   }
 
   $.get('releases.xml', function(data) {
