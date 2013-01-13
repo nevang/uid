@@ -28,7 +28,7 @@ $(document).ready(function(){
       h.append('<p>uid ' + v + ' is built for Scala ' + sp.join(', ') + 
         '. In order to use uid ' + v + ', include the following in your sbt build:</p>')
       h.append(sbtCode(v))
-      a = isStable ? '#stables' : '#snapshots'
+      a = isStable(v) ? '#stables' : '#snapshots'
       h.appendTo($(a))
     })
   }, 'xml')
