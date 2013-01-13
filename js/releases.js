@@ -29,7 +29,7 @@ $(document).ready(function(){
         '. In order to use uid ' + v + ', include the following in your sbt build:</p>')
       h.append(sbtCode(v))
       a = isStable ? '#stables' : '#snapshots'
-      h.appendTo($('.contents'))
+      h.appendTo($(a))
     })
   }, 'xml')
   // prettyPrint()
