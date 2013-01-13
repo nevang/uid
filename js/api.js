@@ -15,7 +15,7 @@ $(document).ready(function(){
       v = $(this).find('version').text()
       h = $('<li />')
       h.append('<a href="' + apiLink(v) + '">ScalaDoc for uid ' + v + '</a>')
-      a = isStable(v) ? '#stables' : '#snapshots'
+      a = isStable(v) ? '#stable-release' : '#snapshot-release'
       h.appendTo($(a))
     })
   }, 'xml')
