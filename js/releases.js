@@ -32,5 +32,5 @@ $(document).ready(function(){
       h.appendTo($('.contents'))
     })
   }, 'xml')
-  prettyPrint()
+  // prettyPrint()
 })
