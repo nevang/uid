@@ -1,17 +1,15 @@
 <releases>
-  <release>
-    <version>1.1.1-SNAPSHOT</version>
-    <scala-versions>
-      <value>2.10</value>
-    </scala-versions>
-  </release>
-  <release>
+      <release>
+      <version>1.1.1-SNAPSHOT</version>
+      <scala-versions>
+        <value>2.10.0</value>
+      </scala-versions>
+    </release><release>
     <version>1.1</version>
     <scala-versions>
       <value>2.10</value>
     </scala-versions>
-  </release>
-  <release>
+  </release><release>
     <version>1.0</version>
     <scala-versions>
       <value>2.10</value>
@@ -24,4 +22,4 @@
       <value>2.8.1</value>
     </scala-versions>
   </release>
-</releases>
+    </releases>
