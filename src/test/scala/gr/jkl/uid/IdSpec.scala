@@ -111,5 +111,25 @@ class IdSpec
         }
       }
     }
+
+    feature("IDs can be sorted by the timestamp, the sequence and the node") {
+
+      scenario("IDs are sorted as Ids") {
+        Given("125000 Ids")
+        val triples = (for {
+          t <- List.fill(50)(randomTimestamp)
+          s <- List.fill(50)(randomSequence)
+          n <- List.fill(50)(randomNode)
+        } yield ((t, s, n))).sorted
+        val ids = triples.map(t => Id.create(t._1, t._3, t._2)).flatten
+        val randomIds = util.Random.shuffle(ids)
+
+        When("They are sorted by the timestamp, the sequence and the node")
+        val sortedIds = randomIds.sorted(Id.TimeSequenceNodeOrdering)
+
+        Then("Their order is correct")
+        sortedIds.map(_.toTriple) should equal (ids.map(_.toTriple))
+      }
+    }
   }
   
