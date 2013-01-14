@@ -6,7 +6,7 @@ import scala.xml.{ XML, NodeSeq }
 /** Manage publishing to Sonatype repos */
 object Publish {
   lazy val developers = SettingKey[Seq[Developer]]("developers", "Project's developers") 
-  lazy val checkPom = TaskKey[Boolean]("check-pom", "Checks if pom contains essential elemets for central")
+  lazy val checkPom = TaskKey[Unit]("check-pom", "Checks if pom contains essential elemets for central")
 
   lazy private[this] val centralElements = Seq(
     Seq("modelVersion"), 
@@ -27,7 +27,7 @@ object Publish {
     val pomNodes = centralElements map ( ns => ns.foldLeft[NodeSeq](pom)(_ \ _))
     val notSetNodes = centralElements.zip(pomNodes).filter(_._2.isEmpty)
     notSetNodes.map(p => s.log.warn(p._1.mkString("\\") + " not set in pom"))
-    notSetNodes.isEmpty
+    if (!notSetNodes.isEmpty) sys.error("pom doesn't satisfy central requirements")
   }
 
   def settings = Seq(

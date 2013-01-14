@@ -6,32 +6,23 @@ import com.typesafe.sbt.SbtGhPages.ghpages
 import com.typesafe.sbt.SbtGhPages.GhPagesKeys._
 import com.typesafe.sbt.site.PamfletSupport.Pamflet
 import com.typesafe.sbt.SbtGit.GitKeys.{ gitRemoteRepo, gitRunner }
+import scala.xml.{ XML, NodeSeq }
 import GitHub._
 
-/** Creates a site with Pamflet via SbtSite plugin and publish it to GitHub Pages.
-  * @todo Manage release notes and manipulate auto and setup pages.
-  */
+/** Creates a site with Pamflet via SbtSite plugin and publish it to GitHub Pages. */
 object Site {
-  lazy val templateProperties = SettingKey[File]("site-properties", "File for pamflet template properties")
-  lazy val updateVersion = TaskKey[File]("site-update-version", "Writes the build version in pamflet template properties")
-  lazy val siteVersion = TaskKey[String]("site-version", "Reads the version in site's template properties")
-  lazy val compareVersions = TaskKey[Boolean]("compare-versions", "Compares the build and the template properties versions")
-
   def settings = site.settings ++ site.pamfletSupport() ++ ghpages.settings ++ Seq(
     homepage <<= GitHub.ghPage(Some(_)),
     gitRemoteRepo <<= ghSsh,
     synchLocal <<= newSynchLocal,
-    siteMappings <++= scalaDocSiteMappings,
-    templateProperties <<= (sourceDirectory in Pamflet) (s => file(s + "/template.properties")),
-    updateVersion <<= updateVersionTask,
-    siteVersion <<= siteVersionTask,
-    compareVersions <<= compareVersionsTask)
+    siteMappings <++= scalaDocSiteMappings)
 
   // override the synchLocal task to avoid removing the existing files (from specs2)
   def newSynchLocal = 
-    (privateMappings, updatedRepository, gitRunner, streams) map { (mappings, repo, git, s) =>
+    (privateMappings, updatedRepository, gitRunner, version, crossScalaVersions) map { (mappings, repo, git, v, cv) =>
       val betterMappings = mappings map { case (file, target) => (file, repo / target) }
       IO.copy(betterMappings)
+      updateSiteVersion(repo / "releases.xml", v, cv.map(CrossVersion.binaryScalaVersion))
       repo
     }
 
@@ -42,27 +33,39 @@ object Site {
       for((f, d) <- m) yield (f, apiRoot + "/" + d)
     }
 
-  private[this] lazy val vPrfx = "version="
-
-  def updateVersionTask = 
-    (version, compareVersions, templateProperties, streams) map { (v, cv, f, s) =>
-      if (cv) {
-        s.log.info("Template properties up to date")
-      } else {
-        val newLines = vPrfx + v.trim :: IO.readLines(f).map(_.trim).
-          filterNot(_.startsWith(vPrfx))
-        IO.writeLines(f, newLines)
-        s.log.info("Version in template properties updated to build version")
-      }
-      f
-    }
-
-  def siteVersionTask = (templateProperties) map { f =>
-    IO.readLines(f).map(_.trim).filter(_.startsWith(vPrfx)) match {
-      case v :: Nil => v.diff(vPrfx)
-      case _ => sys.error("Can't find version in template properties")
+  def updateSiteVersion(f: File, version: String, scala: Seq[String]) {
+    val xml = XML.loadFile(f)
+    if (!containsVersion(xml, version)) {
+      val a = removeSnapshots(xml)
+      val b = addVersion(a, version, scala)
+      IO.write(f, b.toString)
     }
   }
 
-  def compareVersionsTask = (version, siteVersion) map ( _.trim == _ )
+  private[this] def containsVersion(releases: NodeSeq, version: String) = 
+    (releases \ "release" \ "version").exists(_.text == version)
+
+  private[this] def addVersion(releases: NodeSeq, version: String, scala: Seq[String]) = 
+    <releases>
+      { releaseElem(version, scala) :+ (releases \ "release") }
+    </releases>
+
+  private[this] def removeVersion(releases: NodeSeq, version: String) = 
+   removeByVersionPredicate(releases, _ != version)
+
+  private[this] def removeSnapshots(releases: NodeSeq) = 
+    removeByVersionPredicate(releases, ! _.endsWith("-SNAPSHOT"))
+
+  private[this] def removeByVersionPredicate(releases: NodeSeq, predicate: String => Boolean) = 
+     <releases>
+      { (releases \ "release").filter(r => (r \ "version").forall(n => predicate(n.text))) }
+    </releases>
+
+  private[this] def releaseElem(version: String, scala: Seq[String]) =
+    <release>
+      <version>{version}</version>
+      <scala-versions>
+        {scala.map(s => <value>{s}</value>)}
+      </scala-versions>
+    </release>
 }
