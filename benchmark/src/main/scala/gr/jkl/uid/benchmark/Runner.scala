@@ -1,6 +1,6 @@
 package gr.jkl.uid.benchmark
 
-import com.google.caliper.{Runner => CaliperRunner}
+import com.google.caliper.{ Runner => CaliperRunner }
 
 object Runner {
 
@@ -8,5 +8,5 @@ object Runner {
 
     CaliperRunner.main(classOf[Benchmark], args)
   }
-  
+
 }

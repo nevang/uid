@@ -1,6 +1,8 @@
 import sbt._
 import sbt.Keys._
 import ls.Plugin.{ lsSettings, LsKeys }
+import com.typesafe.sbt.SbtScalariform
+import scalariform.formatter.preferences._
 
 object Settings {
   lazy val buildOrganization = "gr.jkl"
@@ -11,7 +13,14 @@ object Settings {
     scalaVersion := buildScalaVersion,
     crossVersion := CrossVersion.binary)
 
-  def defaultSettings = buildSettings ++ Seq(
+  def reformSettings = SbtScalariform.scalariformSettings ++ Seq(
+    SbtScalariform.ScalariformKeys.preferences := FormattingPreferences.
+      setPreference(DoubleIndentClassDeclaration, true).
+      setPreference(MultilineScaladocCommentsStartOnFirstLine, true).
+      setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true). 
+      setPreference(AlignSingleLineCaseStatements, true))
+
+  def defaultSettings = buildSettings ++ reformSettings ++ Seq(
     resolvers ++= DefaultOptions.resolvers(true),
     scalacOptions in Compile ++= Seq("-encoding", "UTF-8", "-target:jvm-1.6", "-deprecation", "-feature", "-unchecked"),
     parallelExecution in Test := false,
