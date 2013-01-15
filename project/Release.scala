@@ -9,8 +9,8 @@ object Release {
   def settings = Seq(
     snapshotCheck <<= snapshotCheckTask,
     stableCheck <<= stableCheckTask) ++
-    addCommandAlias("release-snapshot", ";snapshot-check ;check-pom ;+test ;+publish ;ghpages-push-site") ++ 
-    addCommandAlias("release-stable", ";stable-check ;check-pom ;+test ;+publish ;ghpages-push-site ;ls-write-version ;lsync")
+    addCommandAlias("release-snapshot", ";snapshot-check ;clean ;check-pom ;+test ;+publish ;ghpages-push-site") ++ 
+    addCommandAlias("release-stable", ";stable-check ;clean ;check-pom ;+test ;+publish ;ghpages-push-site ;ls-write-version ;lsync")
 
   def snapshotCheckTask = (isSnapshot) map { snap =>
     if (!snap) sys.error("Not a snapshot version")
