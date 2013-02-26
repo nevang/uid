@@ -71,7 +71,8 @@ private[uid] object Codec {
 
   /** Checks if a String can be decoded to Long. */
   private[uid] def isValid(value: String): Boolean =
-    value.length < 12 && value.forall(c => byteSet.contains(c.toInt))
+    (value.length < 12 || (value.length == 12 && value.head < 'F')) &&
+      value.forall(c => byteSet.contains(c.toInt))
 
   /** Decodes a String, shortened or not, to Long. */
   private[uid] def decode(value: String): Option[Long] =
